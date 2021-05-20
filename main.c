@@ -4,10 +4,10 @@
 #include <stdbool.h>
 #include "fileio.h"
 #include "keyword.h"
+#include "linetrckr.h"
 
 #define BUFFER_SIZE 255
 
-//TODO fix line counting
 /*
  *  EXIT CODES
  *  0 OKAY
@@ -36,12 +36,13 @@ int main(int argc, char** argv) {
     // Files
     FILE* fPtr = openFile(fPath, "r");
     FILE* wPtr = openFile("./lexical.lx", "w");
-    int currLine = 1;
+    LineTracker* tracker;
+    tracker = createLineTracker();
     char* currWord;
     currWord = malloc(BUFFER_SIZE);
     while (true){
         if(feof(fPtr)) break;
-        getWord(currWord, fPtr, &currLine, BUFFER_SIZE);
+        getWord(currWord, fPtr, tracker, BUFFER_SIZE);
         switch (getKeyCode(currWord, keyWordRoot))
         {
             case 0:
@@ -84,7 +85,7 @@ int main(int argc, char** argv) {
                 fprintf(wPtr, "Separator\n");
                 break;
             default:
-                if(isStringConstant(currWord, currLine)){
+                if(isStringConstant(currWord, tracker)){
                     fprintf(wPtr, "StringConstant %s\n", currWord);
                 }
                 else if(isIntConstant(currWord)){
@@ -94,7 +95,7 @@ int main(int argc, char** argv) {
                     fprintf(wPtr, "Identifier %s\n", currWord);
                 }
                 else{
-                    fprintf(stderr,"\nUnrecognized keyword \"%s\", at line %d\n", currWord, currLine);
+                    fprintf(stderr,"\nUnrecognized keyword \"%s\", at line %d\n", currWord, getLine(tracker));
                     exit(3);
                 }
                 break;

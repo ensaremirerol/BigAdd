@@ -4,7 +4,7 @@
 
 #ifndef LEXICAL_WIN_KEYWORD_H
 #define LEXICAL_WIN_KEYWORD_H
-#define STRING '"'
+#define LEXEME '"'
 
 typedef struct wordKeyStruct
 {
@@ -100,10 +100,10 @@ bool isVariable(char* str){
     return true;
 }
 
-bool isStringConstant(char* str, int currLine){
-    if(str[0] == STRING){
-        if(str[strlen(str) - 1] == STRING) return true;
-        fprintf(stderr,"String constant does not close at line: %d", currLine);
+bool isStringConstant(char* str, LineTracker* tracker){
+    if(str[0] == LEXEME){
+        if(str[strlen(str) - 1] == LEXEME) return true;
+        fprintf(stderr,"String constant does not close at line: %d", getLine(tracker));
         exit(4);
     }
     return false;

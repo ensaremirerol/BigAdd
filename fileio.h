@@ -2,6 +2,7 @@
 // Created by ensar on 5/19/2021.
 //
 #include <stdio.h>
+#include "linetrckr.h"
 #ifndef LEXICAL_WIN_FILEIO_H
 #define LEXICAL_WIN_FILEIO_H
 #define EOL '.'
@@ -21,48 +22,44 @@ FILE* openFile(char* path, char* mode){
 }
 
 // Clears given char array
-void strclr(char* str, int size){
-    for (int i = 0; i < size; i++)
-    {
-        str[i] = 0;
-    }
+void strclr(char* str, const int BUFFER_SIZE){
+    for (int i = 0; i < BUFFER_SIZE + 1; i++) str[i] = 0;
 }
 
-bool skipIgnoreChars(FILE* fPtr, int* currLine){
+bool skipIgnoreChars(FILE* fPtr, LineTracker* tracker){
     bool result = false;
     char c = (char) fgetc(fPtr);
     if(c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
     while (c == WHITE_SPACE || c == '\n' || c == '\r'){
-        if(c == '\n') currLine++;
+        if(c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
     ungetc(c, fPtr);
     return result;
 }
 
-bool skipCommentBlocks(FILE* fPtr, int* currLine){
-    int lineIncrement = 0;
+bool skipCommentBlocks(FILE* fPtr, LineTracker* tracker){
+    int lineStarted = getLine(tracker);
     bool result = false;
     char c = (char) fgetc(fPtr);
     if(c == COMMENT_OPEN){
         result = true;
         while(c != COMMENT_CLOSE){
             if(feof(fPtr)){
-                fprintf(stderr, "Comment do not closed at line: %d", *currLine);
+                fprintf(stderr, "Comment do not closed at line: %d", lineStarted);
                 exit(4);
             }
-            else if(c == '\n') lineIncrement++;
+            else if(c == '\n') incrementLine(tracker);
             c = (char) fgetc(fPtr);
         }
-        *currLine += lineIncrement;
     }
     else ungetc(c, fPtr);
     return result;
 }
 
-void getWord(char* out, FILE* fPtr, int* currLine, const int BUFFER_SIZE){
+void getWord(char* out, FILE* fPtr, LineTracker* tracker, const int BUFFER_SIZE){
     strclr(out, BUFFER_SIZE);
-    while (skipCommentBlocks(fPtr, currLine) || skipIgnoreChars(fPtr, currLine));
+    while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
     if(feof(fPtr)){
         exit(0);
