@@ -5,21 +5,22 @@
 #ifndef LEXICAL_WIN_LINETRCKR_H
 #define LEXICAL_WIN_LINETRCKR_H
 
-typedef struct lineTracker{
+typedef struct lineTracker {
     int currLine;
-}LineTracker;
+} LineTracker;
 
-int getLine(LineTracker* tracker){
-    return  tracker->currLine;
+int getLine(LineTracker *tracker) {
+    return tracker->currLine;
 }
 
-void incrementLine(LineTracker* tracker){
+void incrementLine(LineTracker *tracker) {
     tracker->currLine++;
 }
 
-LineTracker* createLineTracker(){
-    LineTracker* tracker = (LineTracker*) malloc(sizeof(LineTracker));
+LineTracker *createLineTracker() {
+    LineTracker *tracker = (LineTracker *) malloc(sizeof(LineTracker));
     tracker->currLine = 1;
     return tracker;
 }
+
 #endif //LEXICAL_WIN_LINETRCKR_H

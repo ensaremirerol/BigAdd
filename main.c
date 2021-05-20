@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include "fileio.h"
 #include "keyword.h"
-#include "linetrckr.h"
 
 #define BUFFER_SIZE 255
 
@@ -18,33 +17,30 @@
  *  5 CL ARGUMENT ERROR
  */
 
-int main(int argc, char** argv) {
-    char* fPath;
-    if(argc == 1){
+int main(int argc, char **argv) {
+    char *fPath;
+    if (argc == 1) {
         fprintf(stderr, "You must enter file");
         exit(5);
-    }
-    else if(argc > 2){
+    } else if (argc > 2) {
         fprintf(stderr, "Do not enter more than one argument");
         exit(5);
-    }
-    else{
+    } else {
         fPath = *(argv + 1);
     }
-    KeyWord* keyWordRoot;
+    KeyWord *keyWordRoot;
     keyWordRoot = createKeyWordLinkedList();
     // Files
-    FILE* fPtr = openFile(fPath, "r");
-    FILE* wPtr = openFile("./lexical.lx", "w");
-    LineTracker* tracker;
+    FILE *fPtr = openFile(fPath, "r");
+    FILE *wPtr = openFile("./lexical.lx", "w");
+    LineTracker *tracker;
     tracker = createLineTracker();
-    char* currWord;
+    char *currWord;
     currWord = malloc(BUFFER_SIZE);
-    while (true){
-        if(feof(fPtr)) break;
+    while (true) {
+        if (feof(fPtr)) break;
         getWord(currWord, fPtr, tracker, BUFFER_SIZE);
-        switch (getKeyCode(currWord, keyWordRoot))
-        {
+        switch (getKeyCode(currWord, keyWordRoot)) {
             case 0:
                 fprintf(wPtr, "Keyword int\n");
                 break;
@@ -85,17 +81,14 @@ int main(int argc, char** argv) {
                 fprintf(wPtr, "Separator\n");
                 break;
             default:
-                if(isStringConstant(currWord, tracker)){
+                if (isStringConstant(currWord, tracker)) {
                     fprintf(wPtr, "StringConstant %s\n", currWord);
-                }
-                else if(isIntConstant(currWord)){
+                } else if (isIntConstant(currWord)) {
                     fprintf(wPtr, "IntConstant %s\n", currWord);
-                }
-                else if(isVariable(currWord)){
+                } else if (isVariable(currWord)) {
                     fprintf(wPtr, "Identifier %s\n", currWord);
-                }
-                else{
-                    fprintf(stderr,"\nUnrecognized keyword \"%s\", at line %d\n", currWord, getLine(tracker));
+                } else {
+                    fprintf(stderr, "\nUnrecognized keyword \"%s\", at line %d\n", currWord, getLine(tracker));
                     exit(3);
                 }
                 break;

@@ -3,6 +3,7 @@
 //
 #include <stdio.h>
 #include "linetrckr.h"
+
 #ifndef LEXICAL_WIN_FILEIO_H
 #define LEXICAL_WIN_FILEIO_H
 #define EOL '.'
@@ -10,62 +11,61 @@
 #define COMMENT_OPEN '{'
 #define COMMENT_CLOSE '}'
 #define SEPERATOR ','
+
 // Opens file
-FILE* openFile(char* path, char* mode){
-    FILE* fPtr;
+FILE *openFile(char *path, char *mode) {
+    FILE *fPtr;
     fPtr = fopen(path, mode);
-    if(fPtr) return fPtr;
-    else{
+    if (fPtr) return fPtr;
+    else {
         perror("Error");
         exit(1);
     }
 }
 
 // Clears given char array
-void strclr(char* str, const int BUFFER_SIZE){
+void strclr(char *str, const int BUFFER_SIZE) {
     for (int i = 0; i < BUFFER_SIZE + 1; i++) str[i] = 0;
 }
 
-bool skipIgnoreChars(FILE* fPtr, LineTracker* tracker){
+bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
     bool result = false;
     char c = (char) fgetc(fPtr);
-    if(c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
-    while (c == WHITE_SPACE || c == '\n' || c == '\r'){
-        if(c == '\n') incrementLine(tracker);
+    if (c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
+    while (c == WHITE_SPACE || c == '\n' || c == '\r') {
+        if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
     ungetc(c, fPtr);
     return result;
 }
 
-bool skipCommentBlocks(FILE* fPtr, LineTracker* tracker){
+bool skipCommentBlocks(FILE *fPtr, LineTracker *tracker) {
     int lineStarted = getLine(tracker);
     bool result = false;
     char c = (char) fgetc(fPtr);
-    if(c == COMMENT_OPEN){
+    if (c == COMMENT_OPEN) {
         result = true;
-        while(c != COMMENT_CLOSE){
-            if(feof(fPtr)){
+        while (c != COMMENT_CLOSE) {
+            if (feof(fPtr)) {
                 fprintf(stderr, "Comment do not closed at line: %d", lineStarted);
                 exit(4);
-            }
-            else if(c == '\n') incrementLine(tracker);
+            } else if (c == '\n') incrementLine(tracker);
             c = (char) fgetc(fPtr);
         }
-    }
-    else ungetc(c, fPtr);
+    } else ungetc(c, fPtr);
     return result;
 }
 
-void getWord(char* out, FILE* fPtr, LineTracker* tracker, const int BUFFER_SIZE){
+void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE) {
     strclr(out, BUFFER_SIZE);
     while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
-    if(feof(fPtr)){
+    if (feof(fPtr)) {
         exit(0);
     }
-    if( c != EOL && c != SEPERATOR){
-        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n'; i++){
+    if (c != EOL && c != SEPERATOR) {
+        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n'; i++) {
             out[i] = c;
             c = (char) fgetc(fPtr);
         }
@@ -75,4 +75,5 @@ void getWord(char* out, FILE* fPtr, LineTracker* tracker, const int BUFFER_SIZE)
     }
     out[0] = c;
 }
+
 #endif //LEXICAL_WIN_FILEIO_H
