@@ -19,6 +19,7 @@
 
 int main(int argc, char **argv) {
     char *fPath;
+    char *wPath;
     if (argc == 1) {
         fprintf(stderr, "You must enter file");
         exit(5);
@@ -27,12 +28,16 @@ int main(int argc, char **argv) {
         exit(5);
     } else {
         fPath = *(argv + 1);
+        wPath = (char*) malloc(sizeof(fPath));
+        strcpy(wPath, fPath);
+        wPath[strlen(wPath) - 1] = 'x';
+        wPath[strlen(wPath) - 2] = 'l';
     }
     KeyWord *keyWordRoot;
     keyWordRoot = createKeyWordLinkedList();
     // Files
     FILE *fPtr = openFile(fPath, "r");
-    FILE *wPtr = openFile("./lexical.lx", "w");
+    FILE *wPtr = openFile(wPath, "w");
     LineTracker *tracker;
     tracker = createLineTracker();
     char *currWord;
@@ -96,6 +101,8 @@ int main(int argc, char **argv) {
     }
     fclose(fPtr);
     fclose(wPtr);
+    free(fPath);
+    free(wPath);
     free(currWord);
     freeKeyWordLinkedList(keyWordRoot);
     return 0;

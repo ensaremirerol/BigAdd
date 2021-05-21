@@ -11,6 +11,7 @@
 #define COMMENT_OPEN '{'
 #define COMMENT_CLOSE '}'
 #define SEPERATOR ','
+#define LEXEME '"'
 
 // Opens file
 FILE *openFile(char *path, char *mode) {
@@ -64,12 +65,25 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     if (feof(fPtr)) {
         exit(0);
     }
-    if (c != EOL && c != SEPERATOR) {
+    if (c != EOL && c != SEPERATOR && c != LEXEME) {
         for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n'; i++) {
+            if(c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);
         }
         ungetc(c, fPtr);
+        out[strlen(out)] = '\0';
+        return;
+    }
+    else if(c == LEXEME){
+        out[0] = c;
+        c = (char) fgetc(fPtr);
+        for (int i = 1; c != LEXEME; i++) {
+            if(c == EOF) return;
+            out[i] = c;
+            c = (char) fgetc(fPtr);
+        }
+        out[strlen(out)] = c;
         out[strlen(out)] = '\0';
         return;
     }

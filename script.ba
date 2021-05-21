@@ -5,4 +5,4 @@ loop size times {ignore me, I am a comment}
 [ out size, newline.
 add size to sum.
 ]
-out newline, "Sum:", sum.
+out newline, "Sum :", sum.

@@ -1,0 +1,33 @@
+Keyword int
+Identifier size
+EndOfLine
+Keyword int
+Identifier sum
+EndOfLine
+Keyword move
+IntConstant 5
+Keyword to
+Identifier size
+EndOfLine
+Keyword loop
+Identifier size
+Keyword times
+OpenBlock
+Keyword out
+Identifier size
+Separator
+Keyword newline
+EndOfLine
+Keyword add
+Identifier size
+Keyword to
+Identifier sum
+EndOfLine
+CloseBlock
+Keyword out
+Keyword newline
+Separator
+StringConstant "Sum :"
+Separator
+Identifier sum
+EndOfLine
