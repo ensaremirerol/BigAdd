@@ -11,7 +11,7 @@
 #define COMMENT_OPEN '{'
 #define COMMENT_CLOSE '}'
 #define SEPERATOR ','
-#define LEXEME '"'
+#define LEXEME_STRING '"'
 
 // Opens file
 FILE *openFile(char *path, char *mode) {
@@ -19,7 +19,7 @@ FILE *openFile(char *path, char *mode) {
     fPtr = fopen(path, mode);
     if (fPtr) return fPtr;
     else {
-        perror("Error");
+        perror(path);
         exit(1);
     }
 }
@@ -62,10 +62,10 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     strclr(out, BUFFER_SIZE);
     while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
-    if (feof(fPtr)) {
-        exit(0);
-    }
-    if (c != EOL && c != SEPERATOR && c != LEXEME) {
+
+    if (feof(fPtr)) exit(0);
+
+    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING) {
         for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n'; i++) {
             if(c == EOF) return;
             out[i] = c;
@@ -75,10 +75,10 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
         out[strlen(out)] = '\0';
         return;
     }
-    else if(c == LEXEME){
+    else if(c == LEXEME_STRING){
         out[0] = c;
         c = (char) fgetc(fPtr);
-        for (int i = 1; c != LEXEME; i++) {
+        for (int i = 1; c != LEXEME_STRING; i++) {
             if(c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);
