@@ -28,10 +28,12 @@ int main(int argc, char **argv) {
         exit(5);
     } else {
         fPath = *(argv + 1);
-        wPath = (char*) malloc(sizeof(fPath));
+        size_t len = strlen(fPath);
+        wPath = (char*) malloc((sizeof(char) * len ) + 1);
         strcpy(wPath, fPath);
-        wPath[strlen(wPath) - 1] = 'x';
-        wPath[strlen(wPath) - 2] = 'l';
+        len = strlen(wPath);
+        wPath[len - 1] = 'x';
+        wPath[len - 2] = 'l';
     }
     KeyWord *keyWordRoot;
     keyWordRoot = createKeyWordLinkedList();

@@ -26,7 +26,7 @@ FILE *openFile(char *path, char *mode) {
 
 // Clears given char array
 void strclr(char *str, const int BUFFER_SIZE) {
-    for (int i = 0; i < BUFFER_SIZE + 1; i++) str[i] = 0;
+    for (int i = 0; i < BUFFER_SIZE; i++) str[i] = 0;
 }
 
 bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
@@ -66,7 +66,7 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     if (feof(fPtr)) exit(0);
 
     if (c != EOL && c != SEPERATOR && c != LEXEME_STRING) {
-        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n'; i++) {
+        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r'; i++) {
             if(c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);

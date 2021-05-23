@@ -14,9 +14,7 @@ typedef struct wordKeyStruct {
 KeyWord *createKeyword(char *keyWord, KeyWord *prev) {
     KeyWord *nKeyWord;
     nKeyWord = (KeyWord *) malloc(sizeof(KeyWord));
-    nKeyWord->keyWord = malloc(strlen(keyWord));
-    strcpy(nKeyWord->keyWord, keyWord);
-    prev->next = (KeyWord *) malloc(sizeof(KeyWord *));
+    nKeyWord->keyWord = keyWord;
     prev->next = nKeyWord;
     nKeyWord->next = NULL;
     return nKeyWord;
@@ -26,8 +24,7 @@ KeyWord *createKeyWordLinkedList() {
     KeyWord *head;
     KeyWord *curr;
     head = malloc(sizeof(KeyWord));
-    head->keyWord = malloc(3);
-    strcpy(head->keyWord, "int");
+    head->keyWord = "int";
     // int 0
     curr = head;
     // move 1
