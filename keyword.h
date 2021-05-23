@@ -1,22 +1,45 @@
 //
 // Created by ensar on 5/19/2021.
 //
-
+#include <stdarg.h>
 #ifndef LEXICAL_WIN_KEYWORD_H
 #define LEXICAL_WIN_KEYWORD_H
-#define LEXEME '"'
+#define STRING_CONST 1
+#define INT_CONST 2
+#define VARIABLE 4
+
+
 
 typedef struct wordKeyStruct {
     char *keyWord;
     struct wordKeyStruct *next;
+    struct wordKeyStruct *afterPossibleKeyWords;
+    unsigned char followUp;
 } KeyWord;
+
+KeyWord* getKeyWord(char *keyWord, KeyWord *keyWordRoot);
+
+unsigned char setFollowUps(char string_const, char int_const, char variable){
+    return (string_const * STRING_CONST) | (int_const * INT_CONST) | (variable * VARIABLE);
+}
+
+KeyWord* setAfterPossibleKeywords(KeyWord* head, int n_args, ...){
+    KeyWord* retVal = malloc(sizeof(KeyWord*) * n_args);
+    va_list list;
+    va_start(list, n_args);
+    for (int i = 0; i < n_args; ++i) {
+        set->afterPossibleKeyWords[i] = *getKeyWord(va_arg(list, char*), head);
+    }
+    va_end(list);
+    return retVal;
+}
 
 KeyWord *createKeyword(char *keyWord, KeyWord *prev) {
     KeyWord *nKeyWord;
     nKeyWord = (KeyWord *) malloc(sizeof(KeyWord));
     nKeyWord->keyWord = malloc(strlen(keyWord));
     strcpy(nKeyWord->keyWord, keyWord);
-    prev->next = (KeyWord *) malloc(sizeof(KeyWord *));
+    prev->next = (KeyWord *) malloc(sizeof(KeyWord*));
     prev->next = nKeyWord;
     nKeyWord->next = NULL;
     return nKeyWord;
@@ -53,20 +76,64 @@ KeyWord *createKeyWordLinkedList() {
     // . 11
     curr = createKeyword(".", curr);
     // , 12
-    createKeyword(",", curr);
+    curr = createKeyword(",", curr);
+    // from 13
+    curr = createKeyword("from", curr);
 
+
+    curr = head;
+    // int
+    curr->followUp = setFollowUps(0,0,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, ".");
+    curr = curr->next;
+    // move
+    curr->followUp = setFollowUps(0,1,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "to");
+    curr = curr->next;
+    // add
+    curr->followUp = setFollowUps(0,1,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "to");
+    curr = curr->next;
+    // sub
+    curr->followUp = setFollowUps(0,1,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "from");
+    curr = curr->next;
+    // out
+    curr->followUp = setFollowUps(1,1,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 2, ",", ".");
+    curr = curr->next;
+    // loop
+    curr->followUp = setFollowUps(0,1,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "times");
+    curr = curr->next;
+    // [
+    curr->followUp = 0;
+    curr->afterPossibleKeyWords = NULL;
+    curr = curr->next;
+    // ]
+    curr->followUp = 0;
+    curr->afterPossibleKeyWords = NULL;
+    curr = curr->next;
+    // times
+    curr->followUp = setFollowUps(0,0,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "[");
+    curr = curr->next;
+
+    curr->followUp = setFollowUps(0,1,1);
+    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "times");
+    curr = curr->next;
     return head;
 }
 
-char getKeyCode(char *keyWord, KeyWord *keyWordRoot) {
+KeyWord* getKeyWord(char *keyWord, KeyWord *keyWordRoot) {
     KeyWord *curr = keyWordRoot;
     char i = 0;
     while (curr != NULL) {
-        if (strcmp(curr->keyWord, keyWord) == 0) return i;
+        if (strcmp(curr->keyWord, keyWord) == 0) return curr;
         curr = curr->next;
         i++;
     }
-    return -1;
+    return NULL;
 }
 
 void freeKeyWordLinkedList(KeyWord *head) {

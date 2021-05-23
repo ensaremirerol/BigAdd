@@ -62,7 +62,6 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     strclr(out, BUFFER_SIZE);
     while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
-
     if (feof(fPtr)) exit(0);
 
     if (c != EOL && c != SEPERATOR && c != LEXEME_STRING) {
