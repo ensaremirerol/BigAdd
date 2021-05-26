@@ -4,14 +4,16 @@
 #include <stdio.h>
 #include "linetrckr.h"
 
-#ifndef LEXICAL_WIN_FILEIO_H
-#define LEXICAL_WIN_FILEIO_H
+#ifndef LEXICAL_FILEIO_H
+#define LEXICAL_FILEIO_H
 #define EOL '.'
 #define WHITE_SPACE ' '
 #define COMMENT_OPEN '{'
 #define COMMENT_CLOSE '}'
 #define SEPERATOR ','
 #define LEXEME_STRING '"'
+#define OPEN_BLOCK '['
+#define CLOSE_BLOCK ']'
 
 // Opens file
 FILE *openFile(char *path, char *mode) {
@@ -34,7 +36,8 @@ bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
     char c = (char) fgetc(fPtr);
     if (c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
     while (c == WHITE_SPACE || c == '\n' || c == '\r') {
-        if (c == '\n') incrementLine(tracker);
+        if(feof(fPtr)) return false;
+        else if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
     ungetc(c, fPtr);
@@ -58,14 +61,21 @@ bool skipCommentBlocks(FILE *fPtr, LineTracker *tracker) {
     return result;
 }
 
+void seekEOL(FILE *fPtr){
+    char c = (char) fgetc(fPtr);
+    if(feof(fPtr)) return;
+    while(c != EOL) c = (char) fgetc(fPtr);
+}
+
 void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE) {
     strclr(out, BUFFER_SIZE);
     while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
 
-    if (feof(fPtr)) exit(0);
+    if (feof(fPtr)) return;
 
-    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING) {
+    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING && c!= OPEN_BLOCK && c != CLOSE_BLOCK) {
+
         for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r'; i++) {
             if(c == EOF) return;
             out[i] = c;
@@ -90,4 +100,4 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     out[0] = c;
 }
 
-#endif //LEXICAL_WIN_FILEIO_H
+#endif //LEXICAL_FILEIO_H
