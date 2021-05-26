@@ -9,12 +9,11 @@
 #define STRING_EXPECTED      0b00000010
 #define INT_EXPECTED         0b00000100
 #define IDENTIFIER_USE       0b00001000
-#define SEPERATOR_EXPECTED   0b00010000
 #define IDENTIFIER_DECLARE   0b00100000
 #define BLOCK_EXPECTED       0b01000001
 #define NOP                  0b10000000
 #define IDENTIFIER_EXPECTED  0b00101000
-#define KEYWORD_EXPECTED     0b11010001
+#define KEYWORD_EXPECTED     0b11000001
 #define INT_VAL              0b00001100
 #define OUT_LIST             0b00001110
 
@@ -61,7 +60,7 @@ KeyWord *createKeyWordLinkedList() {
     // sub 3
     curr = addKeyWord("sub", curr, 3, 13, LINE_ENDED,INT_VAL);
     // out 4
-    curr = addKeyWord("out", curr, 4, -1, LINE_ENDED, OUT_LIST);
+    curr = addKeyWord("out", curr, 4, 12, LINE_ENDED, OUT_LIST);
     // loop 5
     curr = addKeyWord("loop", curr, 5, 8, LINE_ENDED,INT_VAL);
     // [ 6
@@ -71,13 +70,13 @@ KeyWord *createKeyWordLinkedList() {
     // times 8
     curr = addKeyWord("times", curr, 8, -1, NOP, KEYWORD_EXPECTED);
     // newline 9
-    curr = addKeyWord("newline", curr, 9, -1, OUT_LIST, SEPERATOR_EXPECTED);
+    curr = addKeyWord("newline", curr, 9, 12, OUT_LIST, NOP);
     // to 10
     curr = addKeyWord("to", curr, 10, 11, NOP, IDENTIFIER_USE);
     // . 11
     curr = addKeyWord(".", curr, 11, -1, NOP, LINE_ENDED);
     // , 12
-    curr = addKeyWord(",", curr, 12, -1, SEPERATOR_EXPECTED, OUT_LIST);
+    curr = addKeyWord(",", curr, 12, 12, NOP, OUT_LIST);
     // from 13
     addKeyWord("from", curr, 13, 1 , NOP, IDENTIFIER_USE);
 

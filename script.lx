@@ -13,6 +13,10 @@ Keyword loop
 Identifier size
 Keyword times
 OpenBlock
+Keyword loop
+Identifier size
+Keyword times
+OpenBlock
 Keyword out
 Identifier size
 Separator
@@ -20,6 +24,10 @@ Keyword newline
 EndOfLine
 Keyword add
 Identifier size
+Keyword to
+Identifier sum
+EndOfLine
+CloseBlock
 CloseBlock
 Keyword out
 Keyword newline

@@ -33,14 +33,14 @@ void openBlock(BlockKeeper* blockKeeper, int line){
 bool closeBlock(BlockKeeper* blockKeeper){
     if(blockKeeper->totalBlocks == 0) return false;
     Block *curr = blockKeeper->root;
-    for (int i = 0; i < blockKeeper->totalBlocks-1; i++) curr = curr->nests;
-    if(curr->nests){
-        free(curr->nests);
-        curr->nests = NULL;
-    }
-    else{
+    if(blockKeeper->totalBlocks == 1){
         free(curr);
         blockKeeper->root = NULL;
+    }
+    else{
+        for (int i = 0; i < blockKeeper->totalBlocks-2; i++) curr = curr->nests;
+        free(curr->nests);
+        curr->nests = NULL;
     }
     blockKeeper->totalBlocks--;
     return true;
@@ -50,16 +50,17 @@ int closeBlockAndGetLine(BlockKeeper* blockKeeper){
     if(blockKeeper->totalBlocks == 0) return -1;
     Block *curr = blockKeeper->root;
     int retVal;
-    for (int i = 0; i < blockKeeper->totalBlocks-1; i++) curr = curr->nests;
-    if(curr->nests){
+
+    if(blockKeeper->totalBlocks == 1){
+        retVal = curr->nests->lineStarted;
+        free(curr);
+        blockKeeper->root = NULL;
+    }
+    else{
+        for (int i = 0; i < blockKeeper->totalBlocks-1; i++) curr = curr->nests;
         retVal = curr->nests->lineStarted;
         free(curr->nests);
         curr->nests = NULL;
-    }
-    else{
-        retVal = curr->lineStarted;
-        free(curr);
-        blockKeeper->root = NULL;
     }
     blockKeeper->totalBlocks--;
     return retVal;

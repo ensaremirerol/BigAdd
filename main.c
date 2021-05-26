@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
                 // keycode 9 is keycode of "newline"
                 if(!(currKeyWord->keycode == 9 && flags == OUT_LIST)){
                     err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                        &expectedKeyCode, fPtr);
+                        &expectedKeyCode, fPtr, tracker);
                     continue;
                 }
                 fprintf(wPtr, "Keyword newline\n");
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
                     // Declare identifier if not. If it's already declared gives error
                     if(!declareIdentifier(currWord, identifierKeeper)){
                         err("Identifier \"%s\" already declared. Error at line %d\n", currWord, getLine(tracker),
-                            &flags, &expectedKeyCode, fPtr);
+                            &flags, &expectedKeyCode, fPtr, tracker);
                         continue;
                     }
                 }
@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
                     // Has identifier declared?
                     if(!isIdentifierDeclared(currWord, identifierKeeper)){
                         err("Identifier \"%s\" has not declared. Error at line %d\n", currWord, getLine(tracker),
-                            &flags, &expectedKeyCode, fPtr);
+                            &flags, &expectedKeyCode, fPtr, tracker);
                         continue;
                     }
                 }
@@ -123,16 +123,22 @@ int main(int argc, char** argv) {
                 fprintf(wPtr, "StringConstant %s\n", currWord);
             else{
                 err("Unrecognized character \"%s\", at line %d\n", currWord, getLine(tracker), &flags,
-                    &expectedKeyCode, fPtr);
+                    &expectedKeyCode, fPtr, tracker);
                 continue;
             }
-            flags = flags == OUT_LIST?SEPERATOR_EXPECTED:NOP;
+            flags = NOP;
         }
         // If keyword expected (LINE_ENDED or NOP)
         else if(currKeyWord && (flags & KEYWORD_EXPECTED) != 0){
-            if(((flags & LINE_ENDED) == LINE_ENDED && expectedKeyCode == -1) ||
-            ((flags & NOP) == NOP && expectedKeyCode == currKeyWord->keycode) ||
-            (flags & SEPERATOR_EXPECTED) == SEPERATOR_EXPECTED){
+            /*
+             * If
+             * 1-) Keywords' flag and keycode matches current flag and expected keycode
+             * 2-) Flags' LINE_ENDED BIT is 1 and expected keycode is -1
+             * 3-) Flag is NOP, expected keycode is 12 and current keywords' keycode is 11 (Exception for "out")
+             */
+            if(((flags & currKeyWord->flagsForKeyword) == currKeyWord->flagsForKeyword &&
+                expectedKeyCode == currKeyWord->keycode) || ((flags & LINE_ENDED) != 0 && expectedKeyCode == -1) ||
+                (flags == NOP && expectedKeyCode == 12 && currKeyWord->keycode == 11)){
                 switch (currKeyWord->keycode) {
                     case 0:
                         fprintf(wPtr, "Keyword int\n");
@@ -159,14 +165,14 @@ int main(int argc, char** argv) {
                         }
                         else
                             err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                                &expectedKeyCode, fPtr);
+                                &expectedKeyCode, fPtr, tracker);
                         break;
                     case 7:
                         if(closeBlock(blockKeeper))
                             fprintf(wPtr, "CloseBlock\n");
                         else
                             err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                                &expectedKeyCode, fPtr);
+                                &expectedKeyCode, fPtr, tracker);
                         break;
                     case 8:
                         fprintf(wPtr, "Keyword times\n");
@@ -194,7 +200,7 @@ int main(int argc, char** argv) {
                 expectedKeyCode = currKeyWord->expectedKeycode;
 
             } else err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                       &expectedKeyCode, fPtr);
+                       &expectedKeyCode, fPtr, tracker);
         }
     }
     while (blockKeeper->totalBlocks != 0){

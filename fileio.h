@@ -61,10 +61,13 @@ bool skipCommentBlocks(FILE *fPtr, LineTracker *tracker) {
     return result;
 }
 
-void seekEOL(FILE *fPtr){
+void seekEOL(FILE *fPtr, LineTracker* tracker){
     char c = (char) fgetc(fPtr);
     if(feof(fPtr)) return;
-    while(c != EOL) c = (char) fgetc(fPtr);
+    while(c != EOL){
+        if(c == '\n') incrementLine(tracker);
+        c = (char) fgetc(fPtr);
+    }
 }
 
 void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE) {
