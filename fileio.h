@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include "linetrckr.h"
 
-#ifndef LEXICAL_REWRITE_FILEIO_H
-#define LEXICAL_REWRITE_FILEIO_H
+#ifndef LEXICAL_FILEIO_H
+#define LEXICAL_FILEIO_H
 #define EOL '.'
 #define WHITE_SPACE ' '
 #define COMMENT_OPEN '{'
@@ -97,4 +97,4 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     out[0] = c;
 }
 
-#endif //LEXICAL_REWRITE_FILEIO_H
+#endif //LEXICAL_FILEIO_H

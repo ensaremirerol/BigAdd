@@ -2,8 +2,8 @@
 // Created by ensar on 5/24/2021.
 //
 
-#ifndef LEXICAL_REWRITE_KEYWORD_H
-#define LEXICAL_REWRITE_KEYWORD_H
+#ifndef LEXICAL_KEYWORD_H
+#define LEXICAL_KEYWORD_H
 
 #define LINE_ENDED           0b00000001
 #define STRING_EXPECTED      0b00000010
@@ -126,4 +126,4 @@ bool isStringConstant(char *str, LineTracker *tracker) {
     return false;
 }
 
-#endif //LEXICAL_REWRITE_KEYWORD_H
+#endif //LEXICAL_KEYWORD_H
