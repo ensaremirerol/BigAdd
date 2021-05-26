@@ -12,6 +12,8 @@
 #define COMMENT_CLOSE '}'
 #define SEPERATOR ','
 #define LEXEME_STRING '"'
+#define OPEN_BLOCK '['
+#define CLOSE_BLOCK ']'
 
 // Opens file
 FILE *openFile(char *path, char *mode) {
@@ -34,7 +36,7 @@ bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
     char c = (char) fgetc(fPtr);
     if (c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
     while (c == WHITE_SPACE || c == '\n' || c == '\r') {
-        if(feof(fPtr)) exit(4);
+        if(feof(fPtr)) return false;
         else if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
@@ -70,9 +72,9 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
 
-    if (feof(fPtr)) exit(0);
+    if (feof(fPtr)) return;
 
-    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING) {
+    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING && c!= OPEN_BLOCK && c != CLOSE_BLOCK) {
         for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r'; i++) {
             if(c == EOF) return;
             out[i] = c;

@@ -11,9 +11,10 @@
 #define IDENTIFIER_USE       0b00001000
 #define SEPERATOR_EXPECTED   0b00010000
 #define IDENTIFIER_DECLARE   0b00100000
+#define BLOCK_EXPECTED       0b01000000
 #define NOP                  0b10000000
 #define IDENTIFIER_EXPECTED  0b00101000
-#define KEYWORD_EXPECTED     0b10010001
+#define KEYWORD_EXPECTED     0b11010001
 #define INT_VAL              0b00001100
 #define OUT_LIST             0b00001110
 
@@ -64,11 +65,11 @@ KeyWord *createKeyWordLinkedList() {
     // loop 5
     curr = addKeyWord("loop", curr, 5, 8, LINE_ENDED,INT_VAL);
     // [ 6
-    curr = addKeyWord("[", curr, 6, -1, LINE_ENDED, LINE_ENDED);
+    curr = addKeyWord("[", curr, 6, -1, BLOCK_EXPECTED, LINE_ENDED);
     // ] 7
     curr = addKeyWord("]", curr, 7, -1, LINE_ENDED, LINE_ENDED);
     // times 8
-    curr = addKeyWord("times", curr, 8, -1, NOP, LINE_ENDED);
+    curr = addKeyWord("times", curr, 8, -1, NOP, KEYWORD_EXPECTED);
     // newline 9
     curr = addKeyWord("newline", curr, 9, -1, OUT_LIST, SEPERATOR_EXPECTED);
     // to 10
@@ -95,16 +96,16 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
 }
 
 bool isIntConstant(char *str) {
-    if (!(str[0] == '-' || (str[0] >= 48 && str[0] < 58))) return false;
+    if (!((str[0] == '-' && strlen(str) <= 101) || ((str[0] >= 48 && str[0] < 58) && strlen(str) <= 100))) return false;
     for (int i = 1; i < strlen(str); i++) if (!(str[i] >= 48 && str[i] < 58)) return false;
     return true;
 }
 
 bool isIdentifier(char *str) {
-    if (!((str[0] >= 65 && str[0] < 91) || (str[0] >= 97 && str[0] < 123))) return false;
+    if (!((str[0] >= 65 && str[0] < 91) || (str[0] >= 97 && str[0] < 123) && strlen(str) <= 20)) return false;
     for (int i = 0; i < strlen(str); i++)
         if (!((str[i] >= 65 && str[i] < 91) ||
-              (str[i] >= 97 && str[i] < 123)))
+              (str[i] >= 97 && str[i] < 123) || (str[i] >= 48 && str[i] < 58) || str[i] == 95))
             return false;
     return true;
 }
