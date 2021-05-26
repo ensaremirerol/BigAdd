@@ -8,11 +8,15 @@
 #define LINE_ENDED           0b00000001
 #define STRING_EXPECTED      0b00000010
 #define INT_EXPECTED         0b00000100
-#define IDENTIFIER_EXPECTED  0b00001000
+#define IDENTIFIER_USE       0b00001000
 #define SEPERATOR_EXPECTED   0b00010000
+#define IDENTIFIER_DECLARE   0b00100000
+#define NOP                  0b10000000
+#define IDENTIFIER_EXPECTED  0b00101000
+#define KEYWORD_EXPECTED     0b10010001
 #define INT_VAL              0b00001100
 #define OUT_LIST             0b00001110
-#define NOP                  0b10000000
+
 typedef struct keyWordStruct{
     char* keyWord;
     char expectedKeycode;
@@ -21,13 +25,6 @@ typedef struct keyWordStruct{
     unsigned char flagsForNextWord;
     struct keyWordStruct *next;
 }KeyWord;
-
-unsigned char getFlag(int lineEnd, int identifierExpected, int intExpected, int stringExpected,
-                      int seperatorExpected){
-    return (unsigned char) (LINE_ENDED * lineEnd) | (IDENTIFIER_EXPECTED * identifierExpected) |
-    (INT_EXPECTED * intExpected) |(STRING_EXPECTED * stringExpected) |
-    (SEPERATOR_EXPECTED * seperatorExpected);
-}
 
 KeyWord *addKeyWord(char* keyWord, KeyWord* prev, char keycode, char expectedKeyCode, unsigned char flagsForKeyWord,
                        unsigned char flagsForNextKeyWord){
@@ -53,7 +50,7 @@ KeyWord *createKeyWordLinkedList() {
     head->keycode = 0;
     head->expectedKeycode = 11;
     head->flagsForKeyword = LINE_ENDED;
-    head->flagsForNextWord = IDENTIFIER_EXPECTED;
+    head->flagsForNextWord = IDENTIFIER_DECLARE;
     // int 0
     curr = head;
     // move 1
@@ -75,13 +72,13 @@ KeyWord *createKeyWordLinkedList() {
     // newline 9
     curr = addKeyWord("newline", curr, 9, -1, OUT_LIST, SEPERATOR_EXPECTED);
     // to 10
-    curr = addKeyWord("to", curr, 10, 11, NOP, IDENTIFIER_EXPECTED);
+    curr = addKeyWord("to", curr, 10, 11, NOP, IDENTIFIER_USE);
     // . 11
     curr = addKeyWord(".", curr, 11, -1, NOP, LINE_ENDED);
     // , 12
     curr = addKeyWord(",", curr, 12, -1, SEPERATOR_EXPECTED, OUT_LIST);
     // from 13
-    addKeyWord("from", curr, 13, 1 ,NOP, IDENTIFIER_EXPECTED);
+    addKeyWord("from", curr, 13, 1 , NOP, IDENTIFIER_USE);
 
     return head;
 }
@@ -97,18 +94,13 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
     return NULL;
 }
 
-bool isKeyWord(char* str, KeyWord* keyWordRoot){
-    return getKeyWord(str,keyWordRoot)!=NULL;
-}
-
-
 bool isIntConstant(char *str) {
     if (!(str[0] == '-' || (str[0] >= 48 && str[0] < 58))) return false;
     for (int i = 1; i < strlen(str); i++) if (!(str[i] >= 48 && str[i] < 58)) return false;
     return true;
 }
 
-bool isVariable(char *str) {
+bool isIdentifier(char *str) {
     if (!((str[0] >= 65 && str[0] < 91) || (str[0] >= 97 && str[0] < 123))) return false;
     for (int i = 0; i < strlen(str); i++)
         if (!((str[i] >= 65 && str[i] < 91) ||
