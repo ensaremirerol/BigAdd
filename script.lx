@@ -20,9 +20,6 @@ Keyword newline
 EndOfLine
 Keyword add
 Identifier size
-Keyword to
-Identifier sum
-EndOfLine
 CloseBlock
 Keyword out
 Keyword newline

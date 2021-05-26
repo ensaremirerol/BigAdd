@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
                 fprintf(wPtr, "Keyword newline\n");
                 flags = currKeyWord->flagsForNextWord;
                 expectedKeyCode = currKeyWord->expectedKeycode;
+                continue;
             }
 
             // Is currWord identifier and is it expected?
@@ -129,65 +130,71 @@ int main(int argc, char** argv) {
         }
         // If keyword expected (LINE_ENDED or NOP)
         else if(currKeyWord && (flags & KEYWORD_EXPECTED) != 0){
-            switch (currKeyWord->keycode) {
-                case 0:
-                    fprintf(wPtr, "Keyword int\n");
-                    break;
-                case 1:
-                    fprintf(wPtr, "Keyword move\n");
-                    break;
-                case 2:
-                    fprintf(wPtr, "Keyword add\n");
-                    break;
-                case 3:
-                    fprintf(wPtr, "Keyword sub\n");
-                    break;
-                case 4:
-                    fprintf(wPtr, "Keyword out\n");
-                    break;
-                case 5:
-                    fprintf(wPtr, "Keyword loop\n");
-                    break;
-                case 6:
-                    if((flags & BLOCK_EXPECTED) == BLOCK_EXPECTED){
-                        openBlock(blockKeeper, getLine(tracker));
-                        fprintf(wPtr, "OpenBlock\n");
-                    }
-                    else
-                        err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                            &expectedKeyCode, fPtr);
-                    break;
-                case 7:
-                    if(closeBlock(blockKeeper))
-                        fprintf(wPtr, "CloseBlock\n");
-                    else
-                        err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                            &expectedKeyCode, fPtr);
-                    break;
-                case 8:
-                    fprintf(wPtr, "Keyword times\n");
-                    break;
-                case 9:
-                    fprintf(wPtr, "Keyword newline\n");
-                    break;
-                case 10:
-                    fprintf(wPtr, "Keyword to\n");
-                    break;
-                case 11:
-                    fprintf(wPtr, "EndOfLine\n");
-                    break;
-                case 12:
-                    fprintf(wPtr, "Separator\n");
-                    break;
-                case 13:
-                    fprintf(wPtr, "Keyword from\n");
-                    break;
-                default:
-                    fprintf(stderr, "Unexpected error! Exiting\n");
-                    exit(-1);
-            }
-            flags = currKeyWord->flagsForNextWord;
-            expectedKeyCode = currKeyWord->expectedKeycode;
+            if(((flags & LINE_ENDED) == LINE_ENDED && expectedKeyCode == -1) ||
+            ((flags & NOP) == NOP && expectedKeyCode == currKeyWord->keycode) ||
+            (flags & SEPERATOR_EXPECTED) == SEPERATOR_EXPECTED){
+                switch (currKeyWord->keycode) {
+                    case 0:
+                        fprintf(wPtr, "Keyword int\n");
+                        break;
+                    case 1:
+                        fprintf(wPtr, "Keyword move\n");
+                        break;
+                    case 2:
+                        fprintf(wPtr, "Keyword add\n");
+                        break;
+                    case 3:
+                        fprintf(wPtr, "Keyword sub\n");
+                        break;
+                    case 4:
+                        fprintf(wPtr, "Keyword out\n");
+                        break;
+                    case 5:
+                        fprintf(wPtr, "Keyword loop\n");
+                        break;
+                    case 6:
+                        if((flags & BLOCK_EXPECTED) == BLOCK_EXPECTED){
+                            openBlock(blockKeeper, getLine(tracker));
+                            fprintf(wPtr, "OpenBlock\n");
+                        }
+                        else
+                            err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
+                                &expectedKeyCode, fPtr);
+                        break;
+                    case 7:
+                        if(closeBlock(blockKeeper))
+                            fprintf(wPtr, "CloseBlock\n");
+                        else
+                            err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
+                                &expectedKeyCode, fPtr);
+                        break;
+                    case 8:
+                        fprintf(wPtr, "Keyword times\n");
+                        break;
+                    case 9:
+                        fprintf(wPtr, "Keyword newline\n");
+                        break;
+                    case 10:
+                        fprintf(wPtr, "Keyword to\n");
+                        break;
+                    case 11:
+                        fprintf(wPtr, "EndOfLine\n");
+                        break;
+                    case 12:
+                        fprintf(wPtr, "Separator\n");
+                        break;
+                    case 13:
+                        fprintf(wPtr, "Keyword from\n");
+                        break;
+                    default:
+                        fprintf(stderr, "Unexpected error! Exiting\n");
+                        exit(-1);
+                }
+                flags = currKeyWord->flagsForNextWord;
+                expectedKeyCode = currKeyWord->expectedKeycode;
+
+            } else err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
+                       &expectedKeyCode, fPtr);
         }
     }
     while (blockKeeper->totalBlocks != 0){
