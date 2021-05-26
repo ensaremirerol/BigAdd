@@ -6,6 +6,7 @@
 #define LEXICAL_WIN_IDENTIFIER_H
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 typedef struct identifierNode{
     char* name;
     int val;
@@ -49,5 +50,21 @@ IdentifierKeeper *createIdentifierKeeper(){
     keeper->root = NULL;
     keeper->size = 0;
     return keeper;
+}
+
+void freeIdentifierKeeper(IdentifierKeeper* identifierKeeper){
+    Identifier *curr = identifierKeeper->root;
+    Identifier *temp;
+    while (curr && curr->next){
+        temp = curr;
+        curr = curr->next;
+        free(temp->name);
+        free(temp);
+    }
+    if(curr){
+        free(curr->name);
+        free(curr);
+    }
+    free(identifierKeeper);
 }
 #endif //LEXICAL_WIN_IDENTIFIER_H

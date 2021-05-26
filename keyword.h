@@ -95,6 +95,18 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
     return NULL;
 }
 
+void freeKeyWordLinkedList(KeyWord* root){
+    KeyWord *temp;
+    while (root && root->next){
+        temp = root;
+        root = root->next;
+        free(temp);
+    }
+    if(root){
+        free(root);
+    }
+}
+
 bool isIntConstant(char *str) {
     if (!((str[0] == '-' && strlen(str) <= 101) || ((str[0] >= 48 && str[0] < 58) && strlen(str) <= 100))) return false;
     for (int i = 1; i < strlen(str); i++) if (!(str[i] >= 48 && str[i] < 58)) return false;

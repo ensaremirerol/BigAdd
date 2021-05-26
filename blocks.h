@@ -72,4 +72,17 @@ BlockKeeper* createBlockKeeper(){
     blockKeeper->root = NULL;
     return blockKeeper;
 }
+
+void freeBlockKeeper(BlockKeeper* blockKeeper){
+    Block *curr = blockKeeper->root;
+    Block *temp;
+    while (curr && curr->nests){
+        temp = curr;
+        curr = curr->nests;
+        free(temp);
+    }
+    if(curr) free(curr);
+    free(blockKeeper);
+}
+
 #endif //LEXICAL_WIN_BLOCKS_H

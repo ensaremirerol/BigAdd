@@ -17,7 +17,6 @@ int main(int argc, char** argv) {
     // Lexical analyzer variables
     unsigned char flags = LINE_ENDED;
     char expectedKeyCode = -1;
-    int blockCount = 0;
     // END
 
     // Argument Control
@@ -197,5 +196,14 @@ int main(int argc, char** argv) {
     if(flags != LINE_ENDED){
         fprintf(stderr, "No \"End line\"(\".\") character found at line %d\n", getLine(tracker));
     }
+
+    freeIdentifierKeeper(identifierKeeper);
+    freeBlockKeeper(blockKeeper);
+    freeKeyWordLinkedList(keyWordRoot);
+    free(tracker);
+    free(currWord);
+    free(wPath);
+    fclose(fPtr);
+    fclose(wPtr);
     return 0;
 }
