@@ -1,47 +1,47 @@
 //
-// Created by ensar on 5/19/2021.
+// Created by ensar on 5/24/2021.
 //
-#include <stdarg.h>
-#ifndef LEXICAL_WIN_KEYWORD_H
-#define LEXICAL_WIN_KEYWORD_H
-#define STRING_CONST 1
-#define INT_CONST 2
-#define VARIABLE 4
 
+#ifndef LEXICAL_REWRITE_KEYWORD_H
+#define LEXICAL_REWRITE_KEYWORD_H
 
+#define LINE_ENDED           0b00000001
+#define STRING_EXPECTED      0b00000010
+#define INT_EXPECTED         0b00000100
+#define IDENTIFIER_EXPECTED  0b00001000
+#define SEPERATOR_EXPECTED   0b00010000
+#define INT_VAL              0b00001100
+#define OUT_LIST             0b00001110
+#define NOP                  0b10000000
+typedef struct keyWordStruct{
+    char* keyWord;
+    char expectedKeycode;
+    char keycode;
+    unsigned char flagsForKeyword;
+    unsigned char flagsForNextWord;
+    struct keyWordStruct *next;
+}KeyWord;
 
-typedef struct wordKeyStruct {
-    char *keyWord;
-    struct wordKeyStruct *next;
-    struct wordKeyStruct *afterPossibleKeyWords;
-    unsigned char followUp;
-} KeyWord;
-
-KeyWord* getKeyWord(char *keyWord, KeyWord *keyWordRoot);
-
-unsigned char setFollowUps(char string_const, char int_const, char variable){
-    return (string_const * STRING_CONST) | (int_const * INT_CONST) | (variable * VARIABLE);
+unsigned char getFlag(int lineEnd, int identifierExpected, int intExpected, int stringExpected,
+                      int seperatorExpected){
+    return (unsigned char) (LINE_ENDED * lineEnd) | (IDENTIFIER_EXPECTED * identifierExpected) |
+    (INT_EXPECTED * intExpected) |(STRING_EXPECTED * stringExpected) |
+    (SEPERATOR_EXPECTED * seperatorExpected);
 }
 
-KeyWord* setAfterPossibleKeywords(KeyWord* head, int n_args, ...){
-    KeyWord* retVal = malloc(sizeof(KeyWord*) * n_args);
-    va_list list;
-    va_start(list, n_args);
-    for (int i = 0; i < n_args; ++i) {
-        set->afterPossibleKeyWords[i] = *getKeyWord(va_arg(list, char*), head);
-    }
-    va_end(list);
-    return retVal;
-}
-
-KeyWord *createKeyword(char *keyWord, KeyWord *prev) {
+KeyWord *addKeyWord(char* keyWord, KeyWord* prev, char keycode, char expectedKeyCode, unsigned char flagsForKeyWord,
+                       unsigned char flagsForNextKeyWord){
     KeyWord *nKeyWord;
     nKeyWord = (KeyWord *) malloc(sizeof(KeyWord));
-    nKeyWord->keyWord = malloc(strlen(keyWord));
-    strcpy(nKeyWord->keyWord, keyWord);
-    prev->next = (KeyWord *) malloc(sizeof(KeyWord*));
-    prev->next = nKeyWord;
+    nKeyWord->keyWord = keyWord;
     nKeyWord->next = NULL;
+    nKeyWord->keycode = keycode;
+    nKeyWord->expectedKeycode = expectedKeyCode;
+    nKeyWord->flagsForKeyword = flagsForKeyWord;
+    nKeyWord->flagsForNextWord = flagsForNextKeyWord;
+
+    prev->next = nKeyWord;
+
     return nKeyWord;
 }
 
@@ -49,83 +49,44 @@ KeyWord *createKeyWordLinkedList() {
     KeyWord *head;
     KeyWord *curr;
     head = malloc(sizeof(KeyWord));
-    head->keyWord = malloc(3);
-    strcpy(head->keyWord, "int");
+    head->keyWord = "int";
+    head->keycode = 0;
+    head->expectedKeycode = 11;
+    head->flagsForKeyword = LINE_ENDED;
+    head->flagsForNextWord = IDENTIFIER_EXPECTED;
     // int 0
     curr = head;
     // move 1
-    curr = createKeyword("move", curr);
+    curr = addKeyWord("move", curr, 1, 10, LINE_ENDED, INT_VAL);
     // add 2
-    curr = createKeyword("add", curr);
+    curr = addKeyWord("add", curr, 2, 10, LINE_ENDED, INT_VAL);
     // sub 3
-    curr = createKeyword("sub", curr);
+    curr = addKeyWord("sub", curr, 3, 13, LINE_ENDED,INT_VAL);
     // out 4
-    curr = createKeyword("out", curr);
+    curr = addKeyWord("out", curr, 4, -1, LINE_ENDED, OUT_LIST);
     // loop 5
-    curr = createKeyword("loop", curr);
+    curr = addKeyWord("loop", curr, 5, 8, LINE_ENDED,INT_VAL);
     // [ 6
-    curr = createKeyword("[", curr);
+    curr = addKeyWord("[", curr, 6, -1, LINE_ENDED, LINE_ENDED);
     // ] 7
-    curr = createKeyword("]", curr);
+    curr = addKeyWord("]", curr, 7, -1, LINE_ENDED, LINE_ENDED);
     // times 8
-    curr = createKeyword("times", curr);
+    curr = addKeyWord("times", curr, 8, -1, NOP, LINE_ENDED);
     // newline 9
-    curr = createKeyword("newline", curr);
+    curr = addKeyWord("newline", curr, 9, -1, OUT_LIST, SEPERATOR_EXPECTED);
     // to 10
-    curr = createKeyword("to", curr);
+    curr = addKeyWord("to", curr, 10, 11, NOP, IDENTIFIER_EXPECTED);
     // . 11
-    curr = createKeyword(".", curr);
+    curr = addKeyWord(".", curr, 11, -1, NOP, LINE_ENDED);
     // , 12
-    curr = createKeyword(",", curr);
+    curr = addKeyWord(",", curr, 12, -1, SEPERATOR_EXPECTED, OUT_LIST);
     // from 13
-    curr = createKeyword("from", curr);
+    addKeyWord("from", curr, 13, 1 ,NOP, IDENTIFIER_EXPECTED);
 
-
-    curr = head;
-    // int
-    curr->followUp = setFollowUps(0,0,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, ".");
-    curr = curr->next;
-    // move
-    curr->followUp = setFollowUps(0,1,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "to");
-    curr = curr->next;
-    // add
-    curr->followUp = setFollowUps(0,1,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "to");
-    curr = curr->next;
-    // sub
-    curr->followUp = setFollowUps(0,1,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "from");
-    curr = curr->next;
-    // out
-    curr->followUp = setFollowUps(1,1,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 2, ",", ".");
-    curr = curr->next;
-    // loop
-    curr->followUp = setFollowUps(0,1,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "times");
-    curr = curr->next;
-    // [
-    curr->followUp = 0;
-    curr->afterPossibleKeyWords = NULL;
-    curr = curr->next;
-    // ]
-    curr->followUp = 0;
-    curr->afterPossibleKeyWords = NULL;
-    curr = curr->next;
-    // times
-    curr->followUp = setFollowUps(0,0,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "[");
-    curr = curr->next;
-
-    curr->followUp = setFollowUps(0,1,1);
-    curr->afterPossibleKeyWords = setAfterPossibleKeywords(head, 1, "times");
-    curr = curr->next;
     return head;
 }
 
-KeyWord* getKeyWord(char *keyWord, KeyWord *keyWordRoot) {
+KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
     KeyWord *curr = keyWordRoot;
     char i = 0;
     while (curr != NULL) {
@@ -136,20 +97,10 @@ KeyWord* getKeyWord(char *keyWord, KeyWord *keyWordRoot) {
     return NULL;
 }
 
-void freeKeyWordLinkedList(KeyWord *head) {
-    KeyWord *temp;
-    while (head) {
-        free(head->keyWord);
-        if (head->next) {
-            temp = head;
-            head = head->next;
-            free(temp);
-        } else {
-            free(head);
-            break;
-        }
-    }
+bool isKeyWord(char* str, KeyWord* keyWordRoot){
+    return getKeyWord(str,keyWordRoot)!=NULL;
 }
+
 
 bool isIntConstant(char *str) {
     if (!(str[0] == '-' || (str[0] >= 48 && str[0] < 58))) return false;
@@ -175,5 +126,4 @@ bool isStringConstant(char *str, LineTracker *tracker) {
     return false;
 }
 
-
-#endif //LEXICAL_WIN_KEYWORD_H
+#endif //LEXICAL_REWRITE_KEYWORD_H

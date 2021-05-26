@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include "linetrckr.h"
 
-#ifndef LEXICAL_WIN_FILEIO_H
-#define LEXICAL_WIN_FILEIO_H
+#ifndef LEXICAL_REWRITE_FILEIO_H
+#define LEXICAL_REWRITE_FILEIO_H
 #define EOL '.'
 #define WHITE_SPACE ' '
 #define COMMENT_OPEN '{'
@@ -26,7 +26,7 @@ FILE *openFile(char *path, char *mode) {
 
 // Clears given char array
 void strclr(char *str, const int BUFFER_SIZE) {
-    for (int i = 0; i < BUFFER_SIZE + 1; i++) str[i] = 0;
+    for (int i = 0; i < BUFFER_SIZE; i++) str[i] = 0;
 }
 
 bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
@@ -34,7 +34,8 @@ bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
     char c = (char) fgetc(fPtr);
     if (c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
     while (c == WHITE_SPACE || c == '\n' || c == '\r') {
-        if (c == '\n') incrementLine(tracker);
+        if(feof(fPtr)) exit(4);
+        else if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
     ungetc(c, fPtr);
@@ -58,14 +59,21 @@ bool skipCommentBlocks(FILE *fPtr, LineTracker *tracker) {
     return result;
 }
 
+void seekEOL(FILE *fPtr){
+    char c = (char) fgetc(fPtr);
+    if(feof(fPtr)) return;
+    while(c != EOL) c = (char) fgetc(fPtr);
+}
+
 void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE) {
     strclr(out, BUFFER_SIZE);
     while (skipCommentBlocks(fPtr, tracker) || skipIgnoreChars(fPtr, tracker));
     char c = (char) fgetc(fPtr);
+
     if (feof(fPtr)) exit(0);
 
     if (c != EOL && c != SEPERATOR && c != LEXEME_STRING) {
-        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n'; i++) {
+        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r'; i++) {
             if(c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);
@@ -89,4 +97,4 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     out[0] = c;
 }
 
-#endif //LEXICAL_WIN_FILEIO_H
+#endif //LEXICAL_REWRITE_FILEIO_H

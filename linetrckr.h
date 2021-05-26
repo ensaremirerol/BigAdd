@@ -2,8 +2,8 @@
 // Created by ensar on 5/20/2021.
 //
 
-#ifndef LEXICAL_WIN_LINETRCKR_H
-#define LEXICAL_WIN_LINETRCKR_H
+#ifndef LEXICAL_REWRITE_LINETRCKR_H
+#define LEXICAL_REWRITE_LINETRCKR_H
 
 typedef struct lineTracker {
     int currLine;
@@ -23,4 +23,4 @@ LineTracker *createLineTracker() {
     return tracker;
 }
 
-#endif //LEXICAL_WIN_LINETRCKR_H
+#endif //LEXICAL_REWRITE_LINETRCKR_H
