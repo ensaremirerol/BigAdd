@@ -36,18 +36,50 @@ int main(int argc, char** argv) {
     }
     // END Argument Control
 
-    // All Key Words
+    // KeyWord
+    /*
+     * Keeps all keywords.
+     * Keyword:
+     *  - keyword: keyword. (as char array)
+     *  - keycode: it's code.
+     *  - expectedKeycode: Expected keycode after this keyword.
+     *  - flagsForKeyword: Expected flag for this keyword to be used.
+     *  - flagsForNextWord: Expected flag for next "word". (It could be anything (Identifier, String, Int, ...))
+     *  - next: next Keyword.
+     */
     KeyWord* currKeyWord;
     KeyWord *keyWordRoot;
     keyWordRoot = createKeyWordLinkedList();
     // END
 
     // IdentifierKeeper
+    /*
+     * Keeps all declared Identifiers and its values
+     * It uses Linked List as Structure
+     * Identifier:
+     *  - name: Identifier name.
+     *  - val: Identifiers' value (not used yet)
+     *  - next: next Identifier
+     * IdentifierKeeper:
+     *  - root: root of Linked List
+     *  - size: size of list
+     */
     IdentifierKeeper * identifierKeeper;
     identifierKeeper = createIdentifierKeeper();
     // END
 
     // BlockKeeper
+    /*
+     * Keeps all all opened blocks and where it opened
+     * It uses Linked List as Structure
+     * When two blocks are nested, nested block linked inside first block
+     * Block:
+     *  - lineStarted: Blocks' start line.
+     *  - nests: Points nested block.
+     * BlockKeeper:
+     *  - root: Root of linked list.
+     *  - totalBlocks: Count of currently open blocks
+     */
     BlockKeeper* blockKeeper;
     blockKeeper = createBlockKeeper();
     // END
@@ -69,6 +101,8 @@ int main(int argc, char** argv) {
         if(feof(fPtr)) break;
         // Gets next word from file
         getWord(currWord, fPtr, tracker, BUFFER_SIZE);
+        // In some cases currWord returns empty (""). It usually indicates end of file.
+        // So to be sure we go back to the start of the while loop.
         if(strcmp(currWord, "") == 0) continue;
         // Try to get KeyWord according to currWord
         currKeyWord = getKeyWord(currWord, keyWordRoot);
@@ -94,11 +128,11 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            // Is currWord identifier and is it expected?
+            // Is currWord a identifier and is it expected?
             else if(isIdentifier(currWord) && (flags & IDENTIFIER_EXPECTED) != 0){
                 // Are we declaring a identifier?
                 if((flags & IDENTIFIER_DECLARE) == IDENTIFIER_DECLARE){
-                    // Declare identifier if not. If it's already declared gives error
+                    // Declare identifier if not. If it's already declared give error
                     if(!declareIdentifier(currWord, identifierKeeper)){
                         err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         continue;
@@ -114,12 +148,16 @@ int main(int argc, char** argv) {
                 }
                 fprintf(wPtr, "Identifier %s\n", currWord);
             }
+            // Is currWord a IntConstant and is it expected?
             else if(isIntConstant(currWord) && (flags & INT_EXPECTED) == INT_EXPECTED)
                 fprintf(wPtr, "IntConstant %s\n", currWord);
+            // Is currWord a String and is it expected?
             else if(isStringConstant(currWord, tracker) && (flags & STRING_EXPECTED) == STRING_EXPECTED)
                 fprintf(wPtr, "StringConstant %s\n", currWord);
             else{
                 err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                // After error we are continue the loop because we don't want to set flag to NOP
+                // In err flag reseted.
                 continue;
             }
             flags = NOP;
@@ -130,7 +168,8 @@ int main(int argc, char** argv) {
              * If
              * 1-) Keywords' flag and keycode matches current flag and expected keycode
              * 2-) Flags' LINE_ENDED BIT is 1 and expected keycode is -1
-             * 3-) Flag is NOP, expected keycode is 12 and current keywords' keycode is 11 (Exception for "out")
+             * 3-) Flag is NOP, expected keycode is 12(',') and current keywords' keycode is 11('.')
+             *     (Exception for "out")
              */
             if(((flags & currKeyWord->flagsForKeyword) == currKeyWord->flagsForKeyword &&
                 expectedKeyCode == currKeyWord->keycode) || ((flags & LINE_ENDED) != 0 && expectedKeyCode == -1) ||
@@ -155,6 +194,7 @@ int main(int argc, char** argv) {
                         fprintf(wPtr, "Keyword loop\n");
                         break;
                     case 6:
+                        // Are we expecting a block?
                         if((flags & BLOCK_EXPECTED) == BLOCK_EXPECTED){
                             openBlock(blockKeeper, getLine(tracker));
                             fprintf(wPtr, "OpenBlock\n");
@@ -163,6 +203,7 @@ int main(int argc, char** argv) {
                             err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         break;
                     case 7:
+                        // Is/Are there any block/s?
                         if(closeBlock(blockKeeper))
                             fprintf(wPtr, "CloseBlock\n");
                         else
@@ -190,6 +231,7 @@ int main(int argc, char** argv) {
                         fprintf(stderr, "Unexpected error! Exiting\n");
                         exit(-1);
                 }
+                // Set flag and expectedKeyCode to next word.
                 flags = currKeyWord->flagsForNextWord;
                 expectedKeyCode = currKeyWord->expectedKeycode;
 
@@ -197,13 +239,15 @@ int main(int argc, char** argv) {
         }
         else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
     }
-
+    // Is/Are there any block/s left open?
     checkBlocks(blockKeeper);
 
+    // Is line ended after last line?
     if(flags != LINE_ENDED){
         fprintf(stderr, "No \"End line\"(\".\") character found at line %d\n", getLine(tracker));
     }
 
+    // Free all unused memory and close the files.
     freeIdentifierKeeper(identifierKeeper);
     freeBlockKeeper(blockKeeper);
     freeKeyWordLinkedList(keyWordRoot);

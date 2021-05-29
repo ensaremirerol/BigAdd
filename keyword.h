@@ -17,6 +17,18 @@
 #define INT_VAL              0b00001100
 #define OUT_LIST             0b00001110
 
+// KeyWord
+/*
+ * Keeps all keywords.
+ * Keyword:
+ *  - keyword: keyword. (as char array)
+ *  - keycode: it's code.
+ *  - expectedKeycode: Expected keycode after this keyword.
+ *  - flagsForKeyword: Expected flag for this keyword to be used.
+ *  - flagsForNextWord: Expected flag for next "word". (It could be anything (Identifier, String, Int, ...))
+ *  - next: next Keyword.
+ */
+
 typedef struct keyWordStruct{
     char* keyWord;
     char expectedKeycode;

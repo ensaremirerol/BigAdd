@@ -4,9 +4,24 @@
 
 #ifndef LEXICAL_WIN_IDENTIFIER_H
 #define LEXICAL_WIN_IDENTIFIER_H
+
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+
+// IdentifierKeeper
+/*
+ * Keeps all declared Identifiers and its values
+ * It uses Linked List as Structure
+ * Identifier:
+ *  - name: Identifier name.
+ *  - val: Identifiers' value (not used yet)
+ *  - next: next Identifier
+ * IdentifierKeeper:
+ *  - root: root of Linked List
+ *  - size: size of list
+ */
+
 typedef struct identifierNode{
     char* name;
     int val;

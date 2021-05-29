@@ -1,4 +1,4 @@
-int ++  *ş _a9 x_5  ..      .
+int ++  *? _a9 x_5  ..      .
 int size5.
 int size.
 int a_25_karakter_uzunlukhata.
@@ -13,6 +13,6 @@ sub x from size          .
 sub x from size                .
 out "hello".
 loop  {move x to size,.} x times out newline        .
-loop     size times “size5 size,   ”.  “” out newline             .
+loop     size times ?size5 size,   ?.  ?? out newline             .
 int x.
 loop x times [ loop size times [add x to size.]]

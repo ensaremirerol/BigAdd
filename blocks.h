@@ -6,6 +6,20 @@
 #define LEXICAL_WIN_BLOCKS_H
 #include <stdlib.h>
 #include <stdbool.h>
+
+// BlockKeeper
+/*
+ * Keeps all all opened blocks and where it opened
+ * It uses Linked List as Structure
+ * When two blocks are nested, nested block linked inside first block
+ * Block:
+ *  - lineStarted: Blocks' start line.
+ *  - nests: Points nested block.
+ * BlockKeeper:
+ *  - root: Root of linked list.
+ *  - totalBlocks: Count of currently open blocks
+ */
+
 typedef struct blockNode{
     int lineStarted;
     struct blockNode* nests;
