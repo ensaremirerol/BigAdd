@@ -68,7 +68,7 @@ KeyWord *createKeyWordLinkedList() {
     // ] 7
     curr = addKeyWord("]", curr, 7, -1, LINE_ENDED, LINE_ENDED);
     // times 8
-    curr = addKeyWord("times", curr, 8, -1, NOP, KEYWORD_EXPECTED);
+    curr = addKeyWord("times", curr, 8, -1, NOP, BLOCK_EXPECTED);
     // newline 9
     curr = addKeyWord("newline", curr, 9, 12, OUT_LIST, NOP);
     // to 10
@@ -78,7 +78,7 @@ KeyWord *createKeyWordLinkedList() {
     // , 12
     curr = addKeyWord(",", curr, 12, 12, NOP, OUT_LIST);
     // from 13
-    addKeyWord("from", curr, 13, 1 , NOP, IDENTIFIER_USE);
+    addKeyWord("from", curr, 13, 11 , NOP, IDENTIFIER_USE);
 
     return head;
 }
@@ -88,6 +88,17 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
     char i = 0;
     while (curr != NULL) {
         if (strcmp(curr->keyWord, keyWord) == 0) return curr;
+        curr = curr->next;
+        i++;
+    }
+    return NULL;
+}
+
+KeyWord *getKeyWordbyIndex(char keyCode, KeyWord *keyWordRoot){
+    KeyWord *curr = keyWordRoot;
+    char i = 0;
+    while (curr != NULL) {
+        if (curr->keycode == keyCode) return curr;
         curr = curr->next;
         i++;
     }
@@ -107,16 +118,16 @@ void freeKeyWordLinkedList(KeyWord* root){
 }
 
 bool isIntConstant(char *str) {
-    if (!((str[0] == '-' && strlen(str) <= 101) || ((str[0] >= 48 && str[0] < 58) && strlen(str) <= 100))) return false;
-    for (int i = 1; i < strlen(str); i++) if (!(str[i] >= 48 && str[i] < 58)) return false;
+    if (!((str[0] == '-' && strlen(str) <= 101) || ((str[0] >= '0' && str[0] <= '9') && strlen(str) <= 100))) return false;
+    for (int i = 1; i < strlen(str); i++) if (!(str[i] >= '0' && str[i] <= '9')) return false;
     return true;
 }
 
 bool isIdentifier(char *str) {
-    if (!((str[0] >= 65 && str[0] < 91) || (str[0] >= 97 && str[0] < 123) && strlen(str) <= 20)) return false;
+    if (!(((str[0] >= 'a' && str[0] <= 'z') || (str[0] >= 'A' && str[0] < 'Z')) && strlen(str) <= 20)) return false;
     for (int i = 0; i < strlen(str); i++)
-        if (!((str[i] >= 65 && str[i] < 91) ||
-              (str[i] >= 97 && str[i] < 123) || (str[i] >= 48 && str[i] < 58) || str[i] == 95))
+        if (!((str[i] >= 'a' && str[i] <= 'z') ||
+              (str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= '0' && str[i] <= '9') || str[i] == '_'))
             return false;
     return true;
 }
@@ -125,7 +136,7 @@ bool isStringConstant(char *str, LineTracker *tracker) {
     if (str[0] == LEXEME_STRING) {
         if (str[strlen(str) - 1] == LEXEME_STRING) return true;
         fprintf(stderr, "String constant does not close at line: %d", getLine(tracker));
-        exit(4);
+        exit(-1);
     }
     return false;
 }

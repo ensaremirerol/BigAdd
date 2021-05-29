@@ -1,38 +1,65 @@
 Keyword int
+EndOfLine
+EndOfLine
+Keyword int
+Identifier size5
+EndOfLine
+Keyword int
 Identifier size
 EndOfLine
 Keyword int
-Identifier sum
+Keyword int
+Identifier x
 EndOfLine
 Keyword move
-IntConstant 5
+Identifier x
 Keyword to
-Identifier size
-EndOfLine
-Keyword loop
-Identifier size
-Keyword times
-OpenBlock
-Keyword loop
-Identifier size
-Keyword times
-OpenBlock
-Keyword out
-Identifier size
-Separator
-Keyword newline
+Keyword move
+Identifier x
+Keyword to
+Identifier size5
 EndOfLine
 Keyword add
-Identifier size
+Keyword add
+Identifier x
 Keyword to
-Identifier sum
+Identifier size
 EndOfLine
-CloseBlock
-CloseBlock
+Keyword sub
+Identifier x
+Keyword from
+Identifier size
+EndOfLine
+Keyword sub
+Identifier x
+Keyword from
+Identifier size
+EndOfLine
+Keyword out
+StringConstant "hello"
+EndOfLine
+Keyword loop
+Identifier x
+Keyword times
 Keyword out
 Keyword newline
-Separator
-StringConstant "Sum :"
-Separator
-Identifier sum
 EndOfLine
+Keyword loop
+Identifier size
+Keyword times
+Keyword int
+Keyword loop
+Identifier x
+Keyword times
+OpenBlock
+Keyword loop
+Identifier size
+Keyword times
+OpenBlock
+Keyword add
+Identifier x
+Keyword to
+Identifier size
+EndOfLine
+CloseBlock
+CloseBlock

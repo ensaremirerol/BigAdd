@@ -79,7 +79,7 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
 
     if (c != EOL && c != SEPERATOR && c != LEXEME_STRING && c!= OPEN_BLOCK && c != CLOSE_BLOCK) {
 
-        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r'; i++) {
+        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r' && i < BUFFER_SIZE-1; i++) {
             if(c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);

@@ -18,7 +18,7 @@ typedef struct blockKeeper{
 
 void openBlock(BlockKeeper* blockKeeper, int line){
     Block *nBlock;
-    nBlock = malloc(sizeof(Identifier));
+    nBlock = malloc(sizeof(Block));
     nBlock->lineStarted = line;
     nBlock->nests = NULL;
     if(blockKeeper->totalBlocks == 0) blockKeeper->root = nBlock;
@@ -52,7 +52,7 @@ int closeBlockAndGetLine(BlockKeeper* blockKeeper){
     int retVal;
 
     if(blockKeeper->totalBlocks == 1){
-        retVal = curr->nests->lineStarted;
+        retVal = curr->lineStarted;
         free(curr);
         blockKeeper->root = NULL;
     }

@@ -3,13 +3,69 @@
 //
 #include <stdio.h>
 #include "fileio.h"
+#include "keyword.h"
+#include "blocks.h"
 #ifndef LEXICAL_ERRHANDLE_H
 #define LEXICAL_ERRHANDLE_H
 
-void err(char* format, char* word, int line, unsigned char* flag, char* expectedKeycode, FILE *fPtr, LineTracker* tracker){
-    fprintf(stderr, format, word, line);
+void resetToEOL(char* word, unsigned char* flag, char* expectedKeycode, FILE *fPtr, LineTracker* tracker){
     *flag = LINE_ENDED;
     *expectedKeycode = -1;
-    seekEOL(fPtr, tracker);
+    if (strcmp(word, ".") != 0) seekEOL(fPtr, tracker);
 }
+
+void err(char* word, KeyWord *root, char* expectedKeycode, unsigned char* flag, FILE *fPtr, LineTracker* tracker){
+
+    if((*flag & KEYWORD_EXPECTED) == 0){
+        switch (*flag) {
+            case INT_VAL:
+                fprintf(stderr, "Expected declared identifier or Int Constant but found \"%s\" at line"
+                                " %d\n", word, getLine(tracker));
+                break;
+            case IDENTIFIER_USE:
+                fprintf(stderr, "Expected declared identifier but found \"%s\" at line"
+                                " %d\n", word, getLine(tracker));
+                break;
+            case OUT_LIST:
+                fprintf(stderr, "Expected declared identifier, Int Constant or String but found \"%s\" at line"
+                                " %d\n", word, getLine(tracker));
+                break;
+            case INT_EXPECTED:
+                fprintf(stderr, "Expected Int Constant but found \"%s\" at line"
+                                " %d\n", word, getLine(tracker));
+                break;
+            case IDENTIFIER_DECLARE:
+                fprintf(stderr, "Expected not declared identifier but found \"%s\" at line"
+                                " %d\n", word, getLine(tracker));
+                break;
+            default:
+                fprintf(stderr, "Not recognized error! Error -> \"%s\" at line"
+                                " %d\n", word, getLine(tracker));
+                break;
+        }
+    }
+    else if ((*flag & KEYWORD_EXPECTED) != 0){
+        if(*expectedKeycode != -1){
+            KeyWord *expected = getKeyWordbyIndex(*expectedKeycode, root);
+            fprintf(stderr, "Expected \"%s\" but found \"%s\" at line"
+                            " %d\n", expected->keyWord, word, getLine(tracker));
+        }
+        else fprintf(stderr, "Expected keyword but found \"%s\" at line"
+                             " %d\n", word, getLine(tracker));
+
+    }
+
+    else fprintf(stderr, "Not recognized error! Error -> \"%s\" at line"
+                         " %d\n", word, getLine(tracker));
+    resetToEOL(word, flag, expectedKeycode, fPtr, tracker);
+}
+
+void checkBlocks(BlockKeeper* blockKeeper){
+    while (blockKeeper->totalBlocks != 0){
+        fprintf(stderr, "Block(line, %d) left open!\n", closeBlockAndGetLine(blockKeeper));
+    }
+}
+
+
+
 #endif //LEXICAL_ERRHANDLE_H

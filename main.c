@@ -6,7 +6,6 @@
 #include "keyword.h"
 #include "errhandle.h"
 #include "identifier.h"
-#include "blocks.h"
 #define BUFFER_SIZE 255
 int main(int argc, char** argv) {
     // Read and Write pointers
@@ -70,6 +69,7 @@ int main(int argc, char** argv) {
         if(feof(fPtr)) break;
         // Gets next word from file
         getWord(currWord, fPtr, tracker, BUFFER_SIZE);
+        if(strcmp(currWord, "") == 0) continue;
         // Try to get KeyWord according to currWord
         currKeyWord = getKeyWord(currWord, keyWordRoot);
         // If current state of lexical analyzer does not expects keyword
@@ -85,8 +85,7 @@ int main(int argc, char** argv) {
                  */
                 // keycode 9 is keycode of "newline"
                 if(!(currKeyWord->keycode == 9 && flags == OUT_LIST)){
-                    err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                        &expectedKeyCode, fPtr, tracker);
+                    err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                     continue;
                 }
                 fprintf(wPtr, "Keyword newline\n");
@@ -101,8 +100,7 @@ int main(int argc, char** argv) {
                 if((flags & IDENTIFIER_DECLARE) == IDENTIFIER_DECLARE){
                     // Declare identifier if not. If it's already declared gives error
                     if(!declareIdentifier(currWord, identifierKeeper)){
-                        err("Identifier \"%s\" already declared. Error at line %d\n", currWord, getLine(tracker),
-                            &flags, &expectedKeyCode, fPtr, tracker);
+                        err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         continue;
                     }
                 }
@@ -110,8 +108,7 @@ int main(int argc, char** argv) {
                 else if((flags & IDENTIFIER_USE) == IDENTIFIER_USE){
                     // Has identifier declared?
                     if(!isIdentifierDeclared(currWord, identifierKeeper)){
-                        err("Identifier \"%s\" has not declared. Error at line %d\n", currWord, getLine(tracker),
-                            &flags, &expectedKeyCode, fPtr, tracker);
+                        err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         continue;
                     }
                 }
@@ -122,8 +119,7 @@ int main(int argc, char** argv) {
             else if(isStringConstant(currWord, tracker) && (flags & STRING_EXPECTED) == STRING_EXPECTED)
                 fprintf(wPtr, "StringConstant %s\n", currWord);
             else{
-                err("Unrecognized character \"%s\", at line %d\n", currWord, getLine(tracker), &flags,
-                    &expectedKeyCode, fPtr, tracker);
+                err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                 continue;
             }
             flags = NOP;
@@ -164,15 +160,13 @@ int main(int argc, char** argv) {
                             fprintf(wPtr, "OpenBlock\n");
                         }
                         else
-                            err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                                &expectedKeyCode, fPtr, tracker);
+                            err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         break;
                     case 7:
                         if(closeBlock(blockKeeper))
                             fprintf(wPtr, "CloseBlock\n");
                         else
-                            err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                                &expectedKeyCode, fPtr, tracker);
+                            err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         break;
                     case 8:
                         fprintf(wPtr, "Keyword times\n");
@@ -199,13 +193,13 @@ int main(int argc, char** argv) {
                 flags = currKeyWord->flagsForNextWord;
                 expectedKeyCode = currKeyWord->expectedKeycode;
 
-            } else err("Unexpected keyword \"%s\", at line, %d\n", currWord, getLine(tracker), &flags,
-                       &expectedKeyCode, fPtr, tracker);
+            } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
         }
+        else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
     }
-    while (blockKeeper->totalBlocks != 0){
-        fprintf(stderr, "Block(line, %d) left open!\n", closeBlockAndGetLine(blockKeeper));
-    }
+
+    checkBlocks(blockKeeper);
+
     if(flags != LINE_ENDED){
         fprintf(stderr, "No \"End line\"(\".\") character found at line %d\n", getLine(tracker));
     }
