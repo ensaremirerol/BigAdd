@@ -22,7 +22,7 @@ FILE *openFile(char *path, char *mode) {
     if (fPtr) return fPtr;
     else {
         perror(path);
-        exit(1);
+        return NULL;
     }
 }
 
@@ -36,7 +36,7 @@ bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
     char c = (char) fgetc(fPtr);
     if (c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
     while (c == WHITE_SPACE || c == '\n' || c == '\r') {
-        if(feof(fPtr)) return false;
+        if (feof(fPtr)) return false;
         else if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
@@ -61,11 +61,11 @@ bool skipCommentBlocks(FILE *fPtr, LineTracker *tracker) {
     return result;
 }
 
-void seekEOL(FILE *fPtr, LineTracker* tracker){
+void seekEOL(FILE *fPtr, LineTracker *tracker) {
     char c = (char) fgetc(fPtr);
-    if(feof(fPtr)) return;
-    while(c != EOL){
-        if(c == '\n') incrementLine(tracker);
+    if (feof(fPtr)) return;
+    while (c != EOL) {
+        if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
     }
 }
@@ -77,22 +77,22 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
 
     if (feof(fPtr)) return;
 
-    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING && c!= OPEN_BLOCK && c != CLOSE_BLOCK) {
+    if (c != EOL && c != SEPERATOR && c != LEXEME_STRING && c != OPEN_BLOCK && c != CLOSE_BLOCK) {
 
-        for (int i = 0; c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c!= '\r' && i < BUFFER_SIZE-1; i++) {
-            if(c == EOF) return;
+        for (int i = 0;
+             c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c != '\r' && i < BUFFER_SIZE - 1; i++) {
+            if (c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);
         }
         ungetc(c, fPtr);
         out[strlen(out)] = '\0';
         return;
-    }
-    else if(c == LEXEME_STRING){
+    } else if (c == LEXEME_STRING) {
         out[0] = c;
         c = (char) fgetc(fPtr);
         for (int i = 1; c != LEXEME_STRING; i++) {
-            if(c == EOF) return;
+            if (c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);
         }

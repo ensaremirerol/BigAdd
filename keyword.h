@@ -17,29 +17,31 @@
 #define INT_VAL              0b00001100
 #define OUT_LIST             0b00001110
 
+#define LEXEME_STRING '"'
+
 // KeyWord
 /*
  * Keeps all keywords.
  * Keyword:
  *  - keyword: keyword. (as char array)
- *  - keycode: it's code.
+ *  - keycode: its' code.
  *  - expectedKeycode: Expected keycode after this keyword.
  *  - flagsForKeyword: Expected flag for this keyword to be used.
  *  - flagsForNextWord: Expected flag for next "word". (It could be anything (Identifier, String, Int, ...))
  *  - next: next Keyword.
  */
 
-typedef struct keyWordStruct{
-    char* keyWord;
+typedef struct keyWordStruct {
+    char *keyWord;
     char expectedKeycode;
     char keycode;
     unsigned char flagsForKeyword;
     unsigned char flagsForNextWord;
     struct keyWordStruct *next;
-}KeyWord;
+} KeyWord;
 
-KeyWord *addKeyWord(char* keyWord, KeyWord* prev, char keycode, char expectedKeyCode, unsigned char flagsForKeyWord,
-                       unsigned char flagsForNextKeyWord){
+KeyWord *addKeyWord(char *keyWord, KeyWord *prev, char keycode, char expectedKeyCode, unsigned char flagsForKeyWord,
+                    unsigned char flagsForNextKeyWord) {
     KeyWord *nKeyWord;
     nKeyWord = (KeyWord *) malloc(sizeof(KeyWord));
     nKeyWord->keyWord = keyWord;
@@ -70,11 +72,11 @@ KeyWord *createKeyWordLinkedList() {
     // add 2
     curr = addKeyWord("add", curr, 2, 10, LINE_ENDED, INT_VAL);
     // sub 3
-    curr = addKeyWord("sub", curr, 3, 13, LINE_ENDED,INT_VAL);
+    curr = addKeyWord("sub", curr, 3, 13, LINE_ENDED, INT_VAL);
     // out 4
     curr = addKeyWord("out", curr, 4, 12, LINE_ENDED, OUT_LIST);
     // loop 5
-    curr = addKeyWord("loop", curr, 5, 8, LINE_ENDED,INT_VAL);
+    curr = addKeyWord("loop", curr, 5, 8, LINE_ENDED, INT_VAL);
     // [ 6
     curr = addKeyWord("[", curr, 6, -1, BLOCK_EXPECTED, LINE_ENDED);
     // ] 7
@@ -90,12 +92,12 @@ KeyWord *createKeyWordLinkedList() {
     // , 12
     curr = addKeyWord(",", curr, 12, 12, NOP, OUT_LIST);
     // from 13
-    addKeyWord("from", curr, 13, 11 , NOP, IDENTIFIER_USE);
+    addKeyWord("from", curr, 13, 11, NOP, IDENTIFIER_USE);
 
     return head;
 }
 
-KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
+KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot) {
     KeyWord *curr = keyWordRoot;
     char i = 0;
     while (curr != NULL) {
@@ -106,7 +108,7 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot){
     return NULL;
 }
 
-KeyWord *getKeyWordbyIndex(char keyCode, KeyWord *keyWordRoot){
+KeyWord *getKeyWordbyIndex(char keyCode, KeyWord *keyWordRoot) {
     KeyWord *curr = keyWordRoot;
     char i = 0;
     while (curr != NULL) {
@@ -117,20 +119,21 @@ KeyWord *getKeyWordbyIndex(char keyCode, KeyWord *keyWordRoot){
     return NULL;
 }
 
-void freeKeyWordLinkedList(KeyWord* root){
+void freeKeyWordLinkedList(KeyWord *root) {
     KeyWord *temp;
-    while (root && root->next){
+    while (root && root->next) {
         temp = root;
         root = root->next;
         free(temp);
     }
-    if(root){
+    if (root) {
         free(root);
     }
 }
 
 bool isIntConstant(char *str) {
-    if (!((str[0] == '-' && strlen(str) <= 101) || ((str[0] >= '0' && str[0] <= '9') && strlen(str) <= 100))) return false;
+    if (!((str[0] == '-' && strlen(str) <= 101) || ((str[0] >= '0' && str[0] <= '9') && strlen(str) <= 100)))
+        return false;
     for (int i = 1; i < strlen(str); i++) if (!(str[i] >= '0' && str[i] <= '9')) return false;
     return true;
 }

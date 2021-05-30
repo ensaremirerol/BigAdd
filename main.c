@@ -2,16 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include "fileio.h"
 #include "keyword.h"
 #include "errhandle.h"
 #include "identifier.h"
+
 #define BUFFER_SIZE 255
-int main(int argc, char** argv) {
-    // Read and Write pointers
-    char *fPath;
+
+int lexical_analyzer(char* fPath) {
     char *wPath;
-    // END
+    size_t len = strlen(fPath);
+    wPath = (char *) malloc((sizeof(char) * len) + 1);
+    strcpy(wPath, fPath);
+    len = strlen(wPath);
+    wPath[len - 1] = 'x';
+    wPath[len - 2] = 'l';
 
     // Lexical analyzer variables
     unsigned char flags = LINE_ENDED;
@@ -19,7 +25,7 @@ int main(int argc, char** argv) {
     // END
 
     // Argument Control
-    if (argc == 1) {
+    /*if (argc == 1) {
         fprintf(stderr, "You must enter file");
         exit(5);
     } else if (argc > 2) {
@@ -28,12 +34,12 @@ int main(int argc, char** argv) {
     } else {
         fPath = *(argv + 1);
         size_t len = strlen(fPath);
-        wPath = (char*) malloc((sizeof(char) * len ) + 1);
+        wPath = (char *) malloc((sizeof(char) * len) + 1);
         strcpy(wPath, fPath);
         len = strlen(wPath);
         wPath[len - 1] = 'x';
         wPath[len - 2] = 'l';
-    }
+    }*/
     // END Argument Control
 
     // KeyWord
@@ -47,7 +53,7 @@ int main(int argc, char** argv) {
      *  - flagsForNextWord: Expected flag for next "word". (It could be anything (Identifier, String, Int, ...))
      *  - next: next Keyword.
      */
-    KeyWord* currKeyWord;
+    KeyWord *currKeyWord;
     KeyWord *keyWordRoot;
     keyWordRoot = createKeyWordLinkedList();
     // END
@@ -64,7 +70,7 @@ int main(int argc, char** argv) {
      *  - root: root of Linked List
      *  - size: size of list
      */
-    IdentifierKeeper * identifierKeeper;
+    IdentifierKeeper *identifierKeeper;
     identifierKeeper = createIdentifierKeeper();
     // END
 
@@ -80,14 +86,15 @@ int main(int argc, char** argv) {
      *  - root: Root of linked list.
      *  - totalBlocks: Count of currently open blocks
      */
-    BlockKeeper* blockKeeper;
+    BlockKeeper *blockKeeper;
     blockKeeper = createBlockKeeper();
     // END
 
     // Files
     FILE *fPtr = openFile(fPath, "r");
+    if(fPtr == NULL) return 1;
     FILE *wPtr = openFile(wPath, "w");
-
+    if(wPtr == NULL) return 1;
     // Tracker for current line in Read pointer
     LineTracker *tracker;
     tracker = createLineTracker();
@@ -96,20 +103,20 @@ int main(int argc, char** argv) {
     char *currWord;
     currWord = malloc(BUFFER_SIZE);
 
-    while(true){
+    while (true) {
         // End of file check
-        if(feof(fPtr)) break;
+        if (feof(fPtr)) break;
         // Gets next word from file
         getWord(currWord, fPtr, tracker, BUFFER_SIZE);
         // In some cases currWord returns empty (""). It usually indicates end of file.
         // So to be sure we go back to the start of the while loop.
-        if(strcmp(currWord, "") == 0) continue;
+        if (strcmp(currWord, "") == 0) continue;
         // Try to get KeyWord according to currWord
         currKeyWord = getKeyWord(currWord, keyWordRoot);
         // If current state of lexical analyzer does not expects keyword
-        if((flags & KEYWORD_EXPECTED) == 0){
+        if ((flags & KEYWORD_EXPECTED) == 0) {
             // Is currWord a keyWord
-            if(currKeyWord){
+            if (currKeyWord) {
                 /*
                  * If currWord is a keyWord
                  * 1-) This is a Error
@@ -118,7 +125,7 @@ int main(int argc, char** argv) {
                  * flags. "newline" KeyWord only can come after "out" keyword (flags==OUT_LIST)
                  */
                 // keycode 9 is keycode of "newline"
-                if(!(currKeyWord->keycode == 9 && flags == OUT_LIST)){
+                if (!(currKeyWord->keycode == 9 && flags == OUT_LIST)) {
                     err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                     continue;
                 }
@@ -128,33 +135,33 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            // Is currWord a identifier and is it expected?
-            else if(isIdentifier(currWord) && (flags & IDENTIFIER_EXPECTED) != 0){
+                // Is currWord a identifier and is it expected?
+            else if (isIdentifier(currWord) && (flags & IDENTIFIER_EXPECTED) != 0) {
                 // Are we declaring a identifier?
-                if((flags & IDENTIFIER_DECLARE) == IDENTIFIER_DECLARE){
+                if ((flags & IDENTIFIER_DECLARE) == IDENTIFIER_DECLARE) {
                     // Declare identifier if not. If it's already declared give error
-                    if(!declareIdentifier(currWord, identifierKeeper)){
+                    if (!declareIdentifier(currWord, identifierKeeper)) {
                         err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         continue;
                     }
                 }
-                // Are we using a identifier?
-                else if((flags & IDENTIFIER_USE) == IDENTIFIER_USE){
+                    // Are we using a identifier?
+                else if ((flags & IDENTIFIER_USE) == IDENTIFIER_USE) {
                     // Has identifier declared?
-                    if(!isIdentifierDeclared(currWord, identifierKeeper)){
+                    if (!isIdentifierDeclared(currWord, identifierKeeper)) {
                         err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         continue;
                     }
                 }
                 fprintf(wPtr, "Identifier %s\n", currWord);
             }
-            // Is currWord a IntConstant and is it expected?
-            else if(isIntConstant(currWord) && (flags & INT_EXPECTED) == INT_EXPECTED)
+                // Is currWord a IntConstant and is it expected?
+            else if (isIntConstant(currWord) && (flags & INT_EXPECTED) == INT_EXPECTED)
                 fprintf(wPtr, "IntConstant %s\n", currWord);
-            // Is currWord a String and is it expected?
-            else if(isStringConstant(currWord, tracker) && (flags & STRING_EXPECTED) == STRING_EXPECTED)
+                // Is currWord a String and is it expected?
+            else if (isStringConstant(currWord, tracker) && (flags & STRING_EXPECTED) == STRING_EXPECTED)
                 fprintf(wPtr, "StringConstant %s\n", currWord);
-            else{
+            else {
                 err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                 // After error we are continue the loop because we don't want to set flag to NOP
                 // In err flag reseted.
@@ -162,8 +169,8 @@ int main(int argc, char** argv) {
             }
             flags = NOP;
         }
-        // If keyword expected (LINE_ENDED or NOP)
-        else if(currKeyWord && (flags & KEYWORD_EXPECTED) != 0){
+            // If keyword expected (LINE_ENDED or NOP)
+        else if (currKeyWord && (flags & KEYWORD_EXPECTED) != 0) {
             /*
              * If
              * 1-) Keywords' flag and keycode matches current flag and expected keycode
@@ -171,9 +178,9 @@ int main(int argc, char** argv) {
              * 3-) Flag is NOP, expected keycode is 12(',') and current keywords' keycode is 11('.')
              *     (Exception for "out")
              */
-            if(((flags & currKeyWord->flagsForKeyword) == currKeyWord->flagsForKeyword &&
-                expectedKeyCode == currKeyWord->keycode) || ((flags & LINE_ENDED) != 0 && expectedKeyCode == -1) ||
-                (flags == NOP && expectedKeyCode == 12 && currKeyWord->keycode == 11)){
+            if (((flags & currKeyWord->flagsForKeyword) == currKeyWord->flagsForKeyword &&
+                 expectedKeyCode == currKeyWord->keycode) || ((flags & LINE_ENDED) != 0 && expectedKeyCode == -1) ||
+                (flags == NOP && expectedKeyCode == 12 && currKeyWord->keycode == 11)) {
                 switch (currKeyWord->keycode) {
                     case 0:
                         fprintf(wPtr, "Keyword int\n");
@@ -195,16 +202,15 @@ int main(int argc, char** argv) {
                         break;
                     case 6:
                         // Are we expecting a block?
-                        if((flags & BLOCK_EXPECTED) == BLOCK_EXPECTED){
+                        if ((flags & BLOCK_EXPECTED) == BLOCK_EXPECTED) {
                             openBlock(blockKeeper, getLine(tracker));
                             fprintf(wPtr, "OpenBlock\n");
-                        }
-                        else
+                        } else
                             err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
                         break;
                     case 7:
                         // Is/Are there any block/s?
-                        if(closeBlock(blockKeeper))
+                        if (closeBlock(blockKeeper))
                             fprintf(wPtr, "CloseBlock\n");
                         else
                             err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
@@ -236,14 +242,13 @@ int main(int argc, char** argv) {
                 expectedKeyCode = currKeyWord->expectedKeycode;
 
             } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
-        }
-        else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+        } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
     }
     // Is/Are there any block/s left open?
     checkBlocks(blockKeeper);
 
     // Is line ended after last line?
-    if(flags != LINE_ENDED){
+    if (flags != LINE_ENDED) {
         fprintf(stderr, "No \"End line\"(\".\") character found at line %d\n", getLine(tracker));
     }
 
@@ -256,5 +261,27 @@ int main(int argc, char** argv) {
     free(wPath);
     fclose(fPtr);
     fclose(wPtr);
+    return 0;
+}
+
+int main(){
+    char *pwd = malloc(PATH_MAX);
+    if(getcwd(pwd, PATH_MAX) == NULL){
+        perror("Error during trying to get working directory");
+        return 1;
+    }
+    char* command = malloc(BUFFER_SIZE);
+    char* fPath = malloc(BUFFER_SIZE);
+    strclr(command, BUFFER_SIZE);
+    strclr(fPath, BUFFER_SIZE);
+    printf("%s:\\> ", pwd);
+    fflush(stdout);
+    scanf("%s %s", command, fPath);
+    if(strcmp(command, "ba") == 0){
+        lexical_analyzer(fPath);
+    }
+    free(pwd);
+    free(fPath);
+    free(command);
     return 0;
 }
