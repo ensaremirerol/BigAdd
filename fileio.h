@@ -34,8 +34,8 @@ void strclr(char *str, const int BUFFER_SIZE) {
 bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker) {
     bool result = false;
     char c = (char) fgetc(fPtr);
-    if (c == WHITE_SPACE || c == '\n' || c == '\r') result = true;
-    while (c == WHITE_SPACE || c == '\n' || c == '\r') {
+    if (c == WHITE_SPACE || c == '\n' || c == '\r' || c == '\t') result = true;
+    while (c == WHITE_SPACE || c == '\n' || c == '\r' || c == '\t') {
         if (feof(fPtr)) return false;
         else if (c == '\n') incrementLine(tracker);
         c = (char) fgetc(fPtr);
@@ -80,8 +80,9 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     if (c != EOL && c != SEPERATOR && c != LEXEME_STRING && c != OPEN_BLOCK && c != CLOSE_BLOCK) {
 
         for (int i = 0;
-             c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c != '\r' && c != LEXEME_STRING &&
-             i < BUFFER_SIZE - 1; i++) {
+             c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c != '\r' && c != '\t' && c != LEXEME_STRING
+             && c != OPEN_BLOCK && c != CLOSE_BLOCK
+             && i < BUFFER_SIZE - 1; i++) {
             if (c == EOF) return;
             out[i] = c;
             c = (char) fgetc(fPtr);

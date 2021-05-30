@@ -258,7 +258,7 @@ int main(){
     strclr(fPath, BUFFER_SIZE);
     printf("%s:\\> ", pwd);
     scanf("%s %s", command, fPath);
-    if(strcmp(command, "ba") == 0){
+    if(strcmp(command, "la") == 0){
         lexical_analyzer(fPath);
     }
     free(pwd);

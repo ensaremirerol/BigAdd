@@ -1,8 +1,21 @@
-int size.
-int sum.
-move 5 to size.
-loop size times {ignore me, I am a comment}
-[ out size, newline.
-add size to sum.
-]
-out newline, "Sum:", sum.
+move x to y.
+move x.
+move loop to size.
+move , 5 to x.
+
+int 	 x   	.
+int a_25_karakter_uzunlukhata.
+add 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999101 to x   .
+add - to x.
+sub +5 to x   .
+add -5-5 to x.
+move 5 to x  .
+
+. . . .
+add {} 5 to x  .
+loop x times[loop x times out "I must work properly :)".]
+loop y times output "This is not correct, y is undefined!".
+
+out"This is not correct.".
+out    	"This is correct.{$$$}{{}{}{}{***".
+out "upsss, I forgot about the end of the line!"

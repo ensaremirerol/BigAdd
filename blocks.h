@@ -70,7 +70,7 @@ int closeBlockAndGetLine(BlockKeeper *blockKeeper) {
         free(curr);
         blockKeeper->root = NULL;
     } else {
-        for (int i = 0; i < blockKeeper->totalBlocks - 1; i++) curr = curr->nests;
+        for (int i = 0; i < blockKeeper->totalBlocks - 2; i++) curr = curr->nests;
         retVal = curr->nests->lineStarted;
         free(curr->nests);
         curr->nests = NULL;

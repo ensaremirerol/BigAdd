@@ -64,7 +64,7 @@ KeyCode | Keyword | Expected Keycode | Expected keyword | Expected Flag      | N
 8       | times   | -1               |                  | NOP                | BLOCK_EXPECTED
 9       | newline | 12               | ,                | OUT_LIST           | NOP
 10      | to      | 11               | .                | NOP                | IDENTIFIER_USE
-11      | .       | -1               | .                | NOP                | LINE_ENDED
+11      | .       | -1               |                  | NOP                | LINE_ENDED
 12      | ,       | 12               | ,                | NOP                | OUT_LIST
 13      | from    | 11               | .                | NOP                | IDENTIFIER_USE
 
