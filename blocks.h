@@ -10,7 +10,7 @@
 
 // BlockKeeper
 /*
- * Keeps all all opened blocks and where it opened
+ * Keeps all opened blocks and where it opened
  * It uses Linked List as Structure
  * When two blocks are nested, nested block linked inside first block
  * Block:

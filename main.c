@@ -24,24 +24,6 @@ int lexical_analyzer(char* fPath) {
     char expectedKeyCode = -1;
     // END
 
-    // Argument Control
-    /*if (argc == 1) {
-        fprintf(stderr, "You must enter file");
-        exit(5);
-    } else if (argc > 2) {
-        fprintf(stderr, "Do not enter more than one argument");
-        exit(5);
-    } else {
-        fPath = *(argv + 1);
-        size_t len = strlen(fPath);
-        wPath = (char *) malloc((sizeof(char) * len) + 1);
-        strcpy(wPath, fPath);
-        len = strlen(wPath);
-        wPath[len - 1] = 'x';
-        wPath[len - 2] = 'l';
-    }*/
-    // END Argument Control
-
     // KeyWord
     /*
      * Keeps all keywords.
@@ -265,8 +247,8 @@ int lexical_analyzer(char* fPath) {
 }
 
 int main(){
-    char *pwd = malloc(PATH_MAX);
-    if(getcwd(pwd, PATH_MAX) == NULL){
+    char *pwd = malloc(1000);
+    if(getcwd(pwd, 1000) == NULL){
         perror("Error during trying to get working directory");
         return 1;
     }
@@ -275,7 +257,6 @@ int main(){
     strclr(command, BUFFER_SIZE);
     strclr(fPath, BUFFER_SIZE);
     printf("%s:\\> ", pwd);
-    fflush(stdout);
     scanf("%s %s", command, fPath);
     if(strcmp(command, "ba") == 0){
         lexical_analyzer(fPath);

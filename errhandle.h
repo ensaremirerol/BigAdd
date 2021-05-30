@@ -21,32 +21,61 @@ void err(char *word, KeyWord *root, char *expectedKeycode, unsigned char *flag, 
 
     // If keyword expected
     if ((*flag & KEYWORD_EXPECTED) == 0) {
-        switch (*flag) {
-            case INT_VAL:
-                fprintf(stderr, "Expected declared identifier or Int Constant but found \"%s\" at line"
-                                " %d\n", word, getLine(tracker));
-                break;
-            case IDENTIFIER_USE:
-                fprintf(stderr, "Expected declared identifier but found \"%s\" at line"
-                                " %d\n", word, getLine(tracker));
-                break;
-            case OUT_LIST:
-                fprintf(stderr, "Expected declared identifier, Int Constant or String but found \"%s\" at line"
-                                " %d\n", word, getLine(tracker));
-                break;
-            case INT_EXPECTED:
-                fprintf(stderr, "Expected Int Constant but found \"%s\" at line"
-                                " %d\n", word, getLine(tracker));
-                break;
-            case IDENTIFIER_DECLARE:
-                fprintf(stderr, "Expected not declared identifier but found \"%s\" at line"
-                                " %d\n", word, getLine(tracker));
-                break;
-            default:
-                fprintf(stderr, "Not recognized error! Error -> \"%s\" at line"
-                                " %d\n", word, getLine(tracker));
-                break;
+        if(getKeyWord(word, root)){
+            switch (*flag) {
+                case INT_VAL:
+                    fprintf(stderr, "Expected declared identifier or Int Constant but found keyword \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case IDENTIFIER_USE:
+                    fprintf(stderr, "Expected declared identifier but found keyword \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case OUT_LIST:
+                    fprintf(stderr, "Expected declared identifier, Int Constant or String but found keyword \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case INT_EXPECTED:
+                    fprintf(stderr, "Expected Int Constant but found keyword \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case IDENTIFIER_DECLARE:
+                    fprintf(stderr, "Expected not declared identifier but found keyword \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                default:
+                    fprintf(stderr, "Not recognized error! Error -> keyword \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+            }
         }
+        else
+            switch (*flag) {
+                case INT_VAL:
+                    fprintf(stderr, "Expected declared identifier or Int Constant but found \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case IDENTIFIER_USE:
+                    fprintf(stderr, "Expected declared identifier but found \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case OUT_LIST:
+                    fprintf(stderr, "Expected declared identifier, Int Constant or String but found \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case INT_EXPECTED:
+                    fprintf(stderr, "Expected Int Constant but found \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                case IDENTIFIER_DECLARE:
+                    fprintf(stderr, "Expected not declared identifier but found \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+                default:
+                    fprintf(stderr, "Not recognized error! Error -> \"%s\" at line"
+                                    " %d\n", word, getLine(tracker));
+                    break;
+            }
     } else if ((*flag & KEYWORD_EXPECTED) != 0) {
         // If a keyCode is expected
         if (*expectedKeycode != -1) {
