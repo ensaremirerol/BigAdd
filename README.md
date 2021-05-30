@@ -1,5 +1,7 @@
 #Lexical Analyzer for BigAdd Language
+
 ##Big Add language
+
 BigAdd language is a small programming language that has been designed in order to add and subtract
 big integers programmatically and display the result on the screen.
 
@@ -10,8 +12,11 @@ example: The command `c:\> ba myscript`
 must load and execute the script file called myscript.ba
 
 ##Lexical analyzers data structures
+
 ### KeyWord
+
 ####KeyWord Struct
+
 ```c
 typedef struct keyWordStruct {
     char *keyWord; // Keyword
@@ -22,8 +27,10 @@ typedef struct keyWordStruct {
     struct keyWordStruct *next; // next Keyword
 } KeyWord;
 ```
+
 Keeps all keywords in a linked list.
 ####Keyword functions
+
 * ```c 
   KeyWord *addKeyWord(char *keyWord, KeyWord *prev, char keycode, char expectedKeyCode, unsigned char flagsForKeyWord,
                     unsigned char flagsForNextKeyWord);
@@ -66,6 +73,7 @@ Keeps all keywords in a linked list.
   * Checks given string is an StringConstant or not.
 
 ###IdentifierKeeper
+
 ####Identifier Struct
 ```c
 typedef struct identifierNode {
@@ -74,6 +82,7 @@ int val; // Identifiers' value (not used yet)
 struct identifierNode *next; // next Identifier
 } Identifier;
 ```
+
 ####IdentifierKeeper Struct
 ```c
 typedef struct identifierKeeper {
@@ -81,6 +90,9 @@ unsigned int size; // root of Linked List
 Identifier *root; // size of list
 } IdentifierKeeper;
 ```
+
 Keeps all declared Identifiers and its values in Linked List. 
 
 ####IdentifierKeeper functions
+
+
