@@ -6,10 +6,25 @@ BigAdd language is a small programming language that has been designed in order 
 big integers programmatically and display the result on the screen.
 
 BigAdd is an interpreted language. The BigAdd interpreter works from the command line with the command BA, and takes the script
-file’s name as the only attribute. The script file is assumed to have the extension .ba .
+file’s name as the only attribute.
 
-example: The command `c:\> ba myscript`
+example: The command `c:\> ba myscript.ba`
 must load and execute the script file called myscript.ba
+
+## How to use Lexical Analyzer for BigAdd Language
+To analyze a file, you should use following format
+
+- `la <PATH>`
+
+Path is path of file which you want to analyze.
+
+Analyzer will print its working path to help you.
+
+Note: You should include the file extension
+
+### Example command
+
+- `la ./script.ba`
 
 ## Lexical analyzers' data structures
 
@@ -242,7 +257,7 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
 * ```c 
   FILE *openFile(char *path, char *mode);
   ```
-  * Opens file at given path. If it fails prints error message.
+  * Opens file at given path. If it fails, prints error message.
 
 * ```c 
   void strclr(char *str, const int BUFFER_SIZE);
@@ -279,10 +294,10 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
       * Open or Close Block ('\[' / '\]')
       
       only write read character and return.
-    * If first character read is Lexeme String (' " '), Reads until another Lexeme String. If can't find 
+    * If first character read is Lexeme String (' \" '), Reads until another Lexeme String. If can't find 
       another Lexeme String, returns.
       
-    * Otherwise, reads until end of word. (Characters one of above or White space)
+    * Otherwise, reads until end of word. (Word termination characters are one of above and White space)
   
 ### errhandle.h
 
@@ -315,6 +330,7 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
     4. Check if the word is keyword
     5. If flag and word do not match, give error and seek to end of line
     6. Else write analysis results to write file.
+    7. If word is a keyword, set flag and expectedKeycode. Otherwise, set flag to NOP
   
 3. Check if any of the block/s are left open
 4. Check if flag is LINE_ENDED

@@ -8,7 +8,7 @@
 #include "errhandle.h"
 #include "identifier.h"
 
-#define BUFFER_SIZE 255
+#define BUFFER_SIZE 1024
 
 int lexical_analyzer(char* fPath) {
     char *wPath;

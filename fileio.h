@@ -81,9 +81,12 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
 
         for (int i = 0;
              c != EOL && c != WHITE_SPACE && c != SEPERATOR && c != '\n' && c != '\r' && c != '\t' && c != LEXEME_STRING
-             && c != OPEN_BLOCK && c != CLOSE_BLOCK
-             && i < BUFFER_SIZE - 1; i++) {
+             && c != OPEN_BLOCK && c != CLOSE_BLOCK; i++) {
             if (c == EOF) return;
+            if(i >= BUFFER_SIZE -1){
+                fprintf(stderr, "Analyzers' buffer overflowed at line %d", getLine(tracker));
+                exit(-1);
+            }
             out[i] = c;
             c = (char) fgetc(fPtr);
         }
@@ -93,8 +96,12 @@ void getWord(char *out, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE)
     } else if (c == LEXEME_STRING) {
         out[0] = c;
         c = (char) fgetc(fPtr);
-        for (int i = 1; c != LEXEME_STRING && i < BUFFER_SIZE; i++) {
+        for (int i = 1; c != LEXEME_STRING; i++) {
             if (c == EOF) return;
+            if(i >= BUFFER_SIZE -1){
+                fprintf(stderr, "Analyzers' buffer overflowed at line %d", getLine(tracker));
+                exit(-1);
+            }
             out[i] = c;
             c = (char) fgetc(fPtr);
         }
