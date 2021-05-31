@@ -16,7 +16,7 @@ To analyze a file, you should use the following format
 
 - `la <PATH>`
 
-<PATH> is the path of the file which you want to analyze.
+`<PATH>` is the path of the file which you want to analyze.
 
 The analyzer will print its working path to help you.
 
