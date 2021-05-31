@@ -26,8 +26,8 @@
  *  - keyword: keyword. (as char array)
  *  - keycode: its' code.
  *  - expectedKeycode: Expected keycode after this keyword.
- *  - flagsForKeyword: Expected flag for this keyword to be used.
- *  - flagsForNextWord: Expected flag for next "word". (It could be anything (Identifier, String, Int, ...))
+ *  - flagsForKeyword: Expected flag for the use of this keyWord
+ *  - flagsForNextWord: Flag for next expected "word". (It could be anything (Identifier, String, Int, ...))
  *  - next: next Keyword.
  */
 

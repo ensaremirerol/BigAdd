@@ -12,13 +12,13 @@ example: The command `c:\> ba myscript.ba`
 must load and execute the script file called myscript.ba
 
 ## How to use Lexical Analyzer for BigAdd Language
-To analyze a file, you should use following format
+To analyze a file, you should use the following format
 
 - `la <PATH>`
 
-Path is path of file which you want to analyze.
+The path is the path of the file which you want to analyze.
 
-Analyzer will print its working path to help you.
+The analyzer will print its working path to help you.
 
 Note: You should include the file extension
 
@@ -37,8 +37,8 @@ typedef struct keyWordStruct {
     char *keyWord; // Keyword
     char expectedKeycode; // Expected keycode after this keyword
     char keycode; // Its' code.
-    unsigned char flagsForKeyword; // Expected flag for this keyword to be used
-    unsigned char flagsForNextWord; // Expected flag for next "word". (It could be anything (Identifier, String, Int, ...))
+    unsigned char flagsForKeyword; // Expected flag for the use of this keyWord
+    unsigned char flagsForNextWord; // Flag for next expected "word". (It could be anything (Identifier, String, Int, ...))
     struct keyWordStruct *next; // next Keyword
 } KeyWord;
 ```
@@ -63,7 +63,7 @@ OUT_LIST           | 0b00001110   | 14            | A String Constant, Int Const
 
 Lexical analyzer checks flag status with "Bitwise And" or "=="
 
-After a non keyword word, lexical analyzer sets flag to NOP
+After a non-keyword word, the lexical analyzer sets the flag to NOP
 
 #### All Keywords
 KeyCode | Keyword | Expected Keycode | Expected keyword | Expected Flag      | Next Flag
@@ -83,28 +83,45 @@ KeyCode | Keyword | Expected Keycode | Expected keyword | Expected Flag      | N
 12      | ,       | 12               | ,                | NOP                | OUT_LIST
 13      | from    | 11               | .                | NOP                | IDENTIFIER_USE
 
+* KeyCode: Keywords' code.
+* Keyword: Keyword itself.
+* Expected KeyCode: Next expected keycode.
+* Expected Keyword: Next expected keyword.
+* Expected Flag: Expected flag for the use of this KeyWord.
+* Next Flag: Flag for next expected "word".
+
+Lexical analyzer always checks flag first.
+
+If `(flag & KEYWORD_EXPECTED)` bitwise operation is `0`,
+lexical analyzer expects a non-keyword word.
+
+Otherwise, the lexical analyzer expects a keyword according to the expectedKeycode.
+
+Note: If the Expected keycode is -1, the lexical analyzer expects the flag to be LINE_ENDED.
+Otherwise, the lexical analyzer expects the flag to be NOP.
+
 #### Keyword Functions
 
 * ```c 
   KeyWord *addKeyWord(char *keyWord, KeyWord *prev, char keycode, char expectedKeyCode, unsigned char flagsForKeyWord,
                     unsigned char flagsForNextKeyWord);
   ```
-    * Adds keyword to list.
+  * Adds keyword to list.
 
 * ```c 
   KeyWord *createKeyWordLinkedList();
   ```
-    * Creates linked list and returns root of it.
+  * Creates linked list and returns the root of it.
 
 * ```c 
   KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot);
   ```
-    * Returns KeyWord pointer using keyWord string(char array). Returns NULL if keyWord not in list.
+  * Returns KeyWord pointer using keyWord string(char array). Returns NULL if keyWord not in the list.
 
 * ```c 
   KeyWord *getKeyWordbyIndex(char keyCode, KeyWord *keyWordRoot);
   ```
-    * Same as above. Just uses keyCodes to find KeyWord.
+  * Same as above. Just uses keyCodes to find KeyWord.
 
 * ```c 
   void freeKeyWordLinkedList(KeyWord *root);
@@ -124,7 +141,7 @@ KeyCode | Keyword | Expected Keycode | Expected keyword | Expected Flag      | N
 * ```c 
   bool isStringConstant(char *str, LineTracker *tracker);
   ```
-  * Checks given string is an StringConstant or not.
+  * Checks given string is a StringConstant or not.
 
 ### IdentifierKeeper
 
@@ -145,7 +162,7 @@ typedef struct identifierKeeper {
 } IdentifierKeeper;
 ```
 
-Keeps all declared Identifiers and its values in Linked List. 
+Keeps all declared Identifiers and their values in Linked List.
 
 #### IdentifierKeeper Functions
 
@@ -168,7 +185,7 @@ Keeps all declared Identifiers and its values in Linked List.
   void freeIdentifierKeeper(IdentifierKeeper *identifierKeeper);
   ```
   * Frees given IdentifierKeeper.
-  
+
 
 ### LineTracker
 #### LineTracker Struct
@@ -195,7 +212,7 @@ Stores current line
   LineTracker *createLineTracker();
   ```
   * Creates a LineTracker and returns its pointer.
-  
+
 
 ### BlockKeeper
 #### Block Struct
@@ -206,7 +223,7 @@ typedef struct blockNode {
   struct blockNode *nests;
 } Block;
 ```
-  
+
 #### BlockKeeperStruct
 
 ```c
@@ -216,8 +233,8 @@ typedef struct blockKeeper {
 } BlockKeeper;
 ```
 
-Keeps all opened blocks and where it opened.
-When two blocks are nested, nested block is linked inside parent block
+Keeps all opened blocks and where they opened.
+When two blocks are nested, the nested block is linked inside the parent block
 
 #### BlockKeeper Functions
 
@@ -245,7 +262,7 @@ When two blocks are nested, nested block is linked inside parent block
   void freeBlockKeeper(BlockKeeper *blockKeeper)
   ```
   * Frees given BlockKeeper.
-  
+
 
 ## Lexical Analyzer Helper Functions
 Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
@@ -257,12 +274,12 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
 * ```c 
   FILE *openFile(char *path, char *mode);
   ```
-  * Opens file at given path. If it fails, prints error message.
+  * Opens file at the given path. If it fails, print an error message.
 
 * ```c 
   void strclr(char *str, const int BUFFER_SIZE);
   ```
-  * Clears given String(char array). BUFFER_SIZE is size of char array.
+  * Clears given String(char array). BUFFER_SIZE is the size of the char array.
 
 * ```c 
   bool skipIgnoreChars(FILE *fPtr, LineTracker *tracker);
@@ -271,6 +288,7 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
     * White Space (' ')
     * Line break ('\n')
     * Carriage return ('\r')
+    * Tab character ('\t'')
   * Returns true if a character is skipped.
 
 * ```c 
@@ -292,19 +310,18 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
       * End Of Line ('.')
       * Separator (',')
       * Open or Close Block ('\[' / '\]')
-      
+
       only write read character and return.
-    * If first character read is Lexeme String (' \" '), Reads until another Lexeme String. If can't find 
-      another Lexeme String, returns.
-      
-    * Otherwise, reads until end of word. (Word termination characters are one of above and White space)
-  
+    * If the first character read is Lexeme String (' \" '), Reads until another Lexeme String. If can't find another Lexeme String, returns.
+
+    * Otherwise, reads until the end of word. (Word termination characters are one of above and White space)
+
 ### errhandle.h
 
 * ```c 
   void resetToEOL(char *word, unsigned char *flag, char *expectedKeycode, FILE *fPtr, LineTracker *tracker);
   ```
-  * Resets lexical analyzer. After an error lexical analyzers stops reading and resets itself to new line 
+  * Resets lexical analyzer. After an error, the lexical analyzer stops reading and resets itself to a new line
     (After '.' character)
 
 
@@ -312,7 +329,7 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
   void err(char *word, KeyWord *root, char *expectedKeycode, unsigned char *flag, FILE *fPtr, LineTracker *tracker);
   ```
   * This function handles all errors.
-  * Prints Expected word, read word, line information about error.
+  * Prints Expected word, read word, line information about the error.
   * Resets lexical analyzer
 
 * ```c 
@@ -320,20 +337,18 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
   ```
   * Checks for blocks which is/are left open.
   * If there is one, Prints information about left open block/s
-  
+
 ## Main program loop
 1. Initialize all necessary structs and variables
 2. While loop:
-    1. If we reach end of file, exit the loop
-    2. Get word using `getWord` function
-    3. Check if the word is empty `strcmp(currWord, "")`
-    4. Check if the word is keyword
-    5. If flag and word do not match, give error and seek to end of line
-    6. Else write analysis results to write file.
-    7. If word is a keyword, set flag and expectedKeycode. Otherwise, set flag to NOP
-  
-3. Check if any of the block/s are left open
-4. Check if flag is LINE_ENDED
-5. Free all allocated memory
+  1. If we reach the end of the file, exit the loop
+  2. Get word using `getWord` function
+  3. Check if the word is empty `strcmp(currWord, "")`
+  4. Check if the word is a keyword
+  5. If flag and word do not match, give error and seek to end of line
+  6. Else write analysis results to write the file.
+  7. If the word is a keyword, set flag and expectedKeycode. Otherwise, set flag to NOP
 
-    
+3. Check if any of the block/s are left open
+4. Check if the flag is LINE_ENDED
+5. Free all allocated memory
