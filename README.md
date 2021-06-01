@@ -45,7 +45,7 @@ typedef struct keyWordStruct {
 
 Keeps all keywords in a linked list.
 
-### All Flags
+#### All Flags
 
 Flag               | Binary Value | Decimal Value | Description
 ---------------    | ------------ | ------------- | -----------

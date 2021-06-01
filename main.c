@@ -108,7 +108,7 @@ int lexical_analyzer(char* fPath) {
                  */
                 // keycode 9 is keycode of "newline"
                 if (!(currKeyWord->keycode == 9 && flags == OUT_LIST)) {
-                    err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                    err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
                     continue;
                 }
                 fprintf(wPtr, "Keyword newline\n");
@@ -123,7 +123,7 @@ int lexical_analyzer(char* fPath) {
                 if ((flags & IDENTIFIER_DECLARE) == IDENTIFIER_DECLARE) {
                     // Declare identifier if not. If it's already declared give error
                     if (!declareIdentifier(currWord, identifierKeeper)) {
-                        err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                        err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
                         continue;
                     }
                 }
@@ -131,7 +131,7 @@ int lexical_analyzer(char* fPath) {
                 else if ((flags & IDENTIFIER_USE) == IDENTIFIER_USE) {
                     // Has identifier declared?
                     if (!isIdentifierDeclared(currWord, identifierKeeper)) {
-                        err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                        err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
                         continue;
                     }
                 }
@@ -144,7 +144,7 @@ int lexical_analyzer(char* fPath) {
             else if (isStringConstant(currWord, tracker) && (flags & STRING_EXPECTED) == STRING_EXPECTED)
                 fprintf(wPtr, "StringConstant %s\n", currWord);
             else {
-                err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
                 // After error we are continue the loop because we don't want to set flag to NOP
                 // In err flag reseted.
                 continue;
@@ -188,14 +188,14 @@ int lexical_analyzer(char* fPath) {
                             openBlock(blockKeeper, getLine(tracker));
                             fprintf(wPtr, "OpenBlock\n");
                         } else
-                            err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                            err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
                         break;
                     case 7:
                         // Is/Are there any block/s?
                         if (closeBlock(blockKeeper))
                             fprintf(wPtr, "CloseBlock\n");
                         else
-                            err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+                            err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
                         break;
                     case 8:
                         fprintf(wPtr, "Keyword times\n");
@@ -223,8 +223,8 @@ int lexical_analyzer(char* fPath) {
                 flags = currKeyWord->flagsForNextWord;
                 expectedKeyCode = currKeyWord->expectedKeycode;
 
-            } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
-        } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker);
+            } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
+        } else err(currWord, keyWordRoot, &expectedKeyCode, &flags, fPtr, tracker, BUFFER_SIZE);
     }
     // Is/Are there any block/s left open?
     checkBlocks(blockKeeper);

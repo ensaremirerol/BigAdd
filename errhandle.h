@@ -10,14 +10,14 @@
 #define LEXICAL_ERRHANDLE_H
 
 // Resets lexical analyzer.
-void resetToEOL(char *word, unsigned char *flag, char *expectedKeycode, FILE *fPtr, LineTracker *tracker) {
+void resetToEOL(char *word, unsigned char *flag, char *expectedKeycode, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE) {
     *flag = LINE_ENDED;
     *expectedKeycode = -1;
-    if (strcmp(word, ".") != 0) seekEOL(fPtr, tracker);
+    if (strcmp(word, ".") != 0) seekEOL(word, fPtr, tracker, BUFFER_SIZE);
 }
 
 // Handles all errors
-void err(char *word, KeyWord *root, char *expectedKeycode, unsigned char *flag, FILE *fPtr, LineTracker *tracker) {
+void err(char *word, KeyWord *root, char *expectedKeycode, unsigned char *flag, FILE *fPtr, LineTracker *tracker, const int BUFFER_SIZE) {
 
     // If keyword expected
     if ((*flag & KEYWORD_EXPECTED) == 0) {
@@ -93,7 +93,7 @@ void err(char *word, KeyWord *root, char *expectedKeycode, unsigned char *flag, 
     else
         fprintf(stderr, "Not recognized error! Error -> \"%s\" at line"
                         " %d\n", word, getLine(tracker));
-    resetToEOL(word, flag, expectedKeycode, fPtr, tracker);
+    resetToEOL(word, flag, expectedKeycode, fPtr, tracker, BUFFER_SIZE);
 }
 
 // Checks left open blocks
