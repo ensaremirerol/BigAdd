@@ -16,7 +16,7 @@ To analyze a file, you should use the following format
 
 - `la <PATH>`
 
-The path is the path of the file which you want to analyze.
+`<PATH>` is the path of the file which you want to analyze.
 
 The analyzer will print its working path to help you.
 
@@ -341,14 +341,13 @@ Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
 ## Main program loop
 1. Initialize all necessary structs and variables
 2. While loop:
-  1. If we reach the end of the file, exit the loop
-  2. Get word using `getWord` function
-  3. Check if the word is empty `strcmp(currWord, "")`
-  4. Check if the word is a keyword
-  5. If flag and word do not match, give error and seek to end of line
-  6. Else write analysis results to write the file.
-  7. If the word is a keyword, set flag and expectedKeycode. Otherwise, set flag to NOP
-
+    1. If we reach the end of the file, exit the loop
+    2. Get word using `getWord` function
+    3. Check if the word is empty `strcmp(currWord, "")`
+    4. Check if the word is a keyword
+    5. If flag and word do not match, give error and seek to end of line
+    6. Else write analysis results to write the file.
+    7. If the word is a keyword, set flag and expectedKeycode. Otherwise, set flag to NOP
 3. Check if any of the block/s are left open
 4. Check if the flag is LINE_ENDED
 5. Free all allocated memory
