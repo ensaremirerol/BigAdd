@@ -22,7 +22,9 @@
  */
 
 typedef struct blockNode {
-    int lineStarted;
+    unsigned int lineStarted;
+    long int fPointer;
+    long int *loopCounter;
     struct blockNode *nests;
 } Block;
 
@@ -31,72 +33,17 @@ typedef struct blockKeeper {
     Block *root;
 } BlockKeeper;
 
-void openBlock(BlockKeeper *blockKeeper, int line) {
-    Block *nBlock;
-    nBlock = malloc(sizeof(Block));
-    nBlock->lineStarted = line;
-    nBlock->nests = NULL;
-    if (blockKeeper->totalBlocks == 0) blockKeeper->root = nBlock;
-    else {
-        Block *curr = blockKeeper->root;
-        for (int i = 0; i < blockKeeper->totalBlocks - 1; i++) curr = curr->nests;
-        curr->nests = nBlock;
-    }
-    blockKeeper->totalBlocks++;
-}
 
-bool closeBlock(BlockKeeper *blockKeeper) {
-    if (blockKeeper->totalBlocks == 0) return false;
-    Block *curr = blockKeeper->root;
-    if (blockKeeper->totalBlocks == 1) {
-        free(curr);
-        blockKeeper->root = NULL;
-    } else {
-        for (int i = 0; i < blockKeeper->totalBlocks - 2; i++) curr = curr->nests;
-        free(curr->nests);
-        curr->nests = NULL;
-    }
-    blockKeeper->totalBlocks--;
-    return true;
-}
+void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, long int fPointer);
 
-int closeBlockAndGetLine(BlockKeeper *blockKeeper) {
-    if (blockKeeper->totalBlocks == 0) return -1;
-    Block *curr = blockKeeper->root;
-    int retVal;
+Block* getBlock(BlockKeeper* blockKeeper);
 
-    if (blockKeeper->totalBlocks == 1) {
-        retVal = curr->lineStarted;
-        free(curr);
-        blockKeeper->root = NULL;
-    } else {
-        for (int i = 0; i < blockKeeper->totalBlocks - 2; i++) curr = curr->nests;
-        retVal = curr->nests->lineStarted;
-        free(curr->nests);
-        curr->nests = NULL;
-    }
-    blockKeeper->totalBlocks--;
-    return retVal;
-}
+bool closeBlock(BlockKeeper *blockKeeper);
 
-BlockKeeper *createBlockKeeper() {
-    BlockKeeper *blockKeeper;
-    blockKeeper = malloc(sizeof(BlockKeeper));
-    blockKeeper->totalBlocks = 0;
-    blockKeeper->root = NULL;
-    return blockKeeper;
-}
+unsigned int closeBlockAndGetLine(BlockKeeper *blockKeeper);
 
-void freeBlockKeeper(BlockKeeper *blockKeeper) {
-    Block *curr = blockKeeper->root;
-    Block *temp;
-    while (curr && curr->nests) {
-        temp = curr;
-        curr = curr->nests;
-        free(temp);
-    }
-    if (curr) free(curr);
-    free(blockKeeper);
-}
+BlockKeeper *createBlockKeeper();
+
+void freeBlockKeeper(BlockKeeper *blockKeeper);
 
 #endif //LEXICAL_WIN_BLOCKS_H
