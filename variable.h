@@ -5,6 +5,7 @@
 #ifndef BIGADD_VARIABLE_H
 #define BIGADD_VARIABLE_H
 #include <stdlib.h>
+#include <string.h>
 typedef enum dataType {
     dIdentifier, dIntConstant, dStringConstant
 }DataType;

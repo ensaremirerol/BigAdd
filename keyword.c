@@ -74,11 +74,11 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot) {
     return NULL;
 }
 
-KeyWord *getKeyWordByKeycode(Keycode keycode, KeyWord *keyWordRoot) {
+KeyWord *getKeyWordByIndex(Keycode keyCode, KeyWord *keyWordRoot){
     KeyWord *curr = keyWordRoot;
     char i = 0;
     while (curr != NULL) {
-        if (curr->keycode == keycode) return curr;
+        if (curr->keycode == keyCode) return curr;
         curr = curr->next;
         i++;
     }
@@ -129,12 +129,13 @@ void identifier(Variable* stack, IdentifierKeeper* identifierKeeper){
 
 void move(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long int val;
-    if(curr->dataType == dIdentifier) val = *getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = *((long int*) curr->data);
+    long int *val;
+    if(curr->dataType == dIdentifier) val = getIdentifierData((char*) curr->data, identifierKeeper);
+    // TODO: Err at pointer casting check pointers
+    else val = ((long*) curr->data);
     curr = curr->next;
     long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
-    *identifierVal = val;
+    *identifierVal = *val;
 }
 
 void add(Variable* stack, IdentifierKeeper* identifierKeeper){

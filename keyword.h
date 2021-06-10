@@ -60,7 +60,7 @@ KeyWord *createKeyWordLinkedList();
 
 KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot);
 
-KeyWord *getKeyWordByIndex(char keyCode, KeyWord *keyWordRoot);
+KeyWord *getKeyWordByIndex(Keycode keyCode, KeyWord *keyWordRoot);
 
 void freeKeyWordLinkedList(KeyWord *root);
 

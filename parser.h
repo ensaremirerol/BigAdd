@@ -10,7 +10,8 @@
 #include "lxanalyzer.h"
 #include "keyword.h"
 #include "identifier.h"
-#include "variablestack.h"
+#include "variable.h"
+#include "errhandle.h"
 
 void parser(LexicalData* data);
 

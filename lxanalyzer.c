@@ -4,6 +4,7 @@
 
 #include "lxanalyzer.h"
 
+
 TokenType lexicalAnalyzer(LexicalData* data, KeyWord *root){
     if(feof(data->fPtr)) return bEOF;
 
@@ -22,4 +23,10 @@ TokenType lexicalAnalyzer(LexicalData* data, KeyWord *root){
     if (isIdentifier(data->currWord->word)) return bIdentifier;
 
     return bError;
+}
+
+void freeLexicalData(LexicalData* data){
+    fclose(data->fPtr);
+    freeWord(data->currWord);
+    free(data);
 }

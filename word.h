@@ -7,7 +7,7 @@
 #define BUFFER_SIZE 255
 #include <stdbool.h>
 #include <stdlib.h>
-#include "fileio.h"
+#include "str.h"
 
 typedef struct wordStruct{
     char* word;

@@ -17,12 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "word.h"
+#include "str.h"
 
 // Opens file
 FILE *openFile(char *path, char *mode);
-
-// Clears given char array
-void strclr(char *str, unsigned int size);
 
 // Skips all ignored characters. If it skips a character/s, returns true.
 bool skipIgnoreChars(FILE *fPtr, unsigned int *line);

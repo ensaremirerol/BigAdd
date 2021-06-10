@@ -7,6 +7,7 @@
 
 #include "word.h"
 #include "keyword.h"
+#include "fileio.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -18,5 +19,7 @@ typedef struct lexicalDataKeeper{
 }LexicalData;
 
 TokenType lexicalAnalyzer(LexicalData* data, KeyWord *root);
+
+void freeLexicalData(LexicalData* data);
 
 #endif //BIGADD_LXANALYZER_H

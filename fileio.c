@@ -15,11 +15,6 @@ FILE *openFile(char *path, char *mode) {
     }
 }
 
-// Clears given char array
-void strclr(char* str, unsigned int size) {
-    for (int i = 0; i < size; i++) str[i] = 0;
-}
-
 // Skips all ignored characters. If it skips a character/s, returns true.
 bool skipIgnoreChars(FILE *fPtr, unsigned int *line) {
     bool result = false;

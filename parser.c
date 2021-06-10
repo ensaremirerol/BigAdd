@@ -4,6 +4,7 @@
 
 #include "parser.h"
 
+
 void parser(LexicalData* data){
 
     unsigned char flag = LINE_ENDED;
@@ -21,16 +22,15 @@ void parser(LexicalData* data){
 
     TokenType currToken;
 
-    Variable *stack;
+    Variable *stack = NULL;
 
-    void (*currOperation)(Variable *stack, IdentifierKeeper *identifierKeeper);
+    void (*currOperation)(Variable *stack, IdentifierKeeper *identifierKeeper) = NULL;
 
     while (true){
         currToken = lexicalAnalyzer(data, root);
         if(currToken == bEOF) break;
         if(currToken == bError){
-            // TODO: Unrecognized token
-            // TODO: ERR CODE
+            err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
             exit(0);
         }
         if((flag & KEYWORD_EXPECTED) == 0){
@@ -44,8 +44,7 @@ void parser(LexicalData* data){
                  */
                 // keycode 9 is keycode of "newline"
                 if (!(data->currKeyword->keycode == bNewline && flag == OUT_LIST)) {
-                    // TODO: Unexpected keyword!
-                    // TODO: ERR CODE
+                    err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                     exit(0);
                 }
                 flag = data->currKeyword->flagsForNextWord;
@@ -58,8 +57,7 @@ void parser(LexicalData* data){
                 if ((flag & IDENTIFIER_DECLARE) == IDENTIFIER_DECLARE) {
                     // Declare identifier if not. If it's already declared give error
                     if (isIdentifierDeclared(data->currWord->word, identifierKeeper)) {
-                        // TODO: Identifier has already declared!
-                        // TODO: ERR CODE
+                        err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                         exit(0);
                     }
                 }
@@ -67,16 +65,16 @@ void parser(LexicalData* data){
                 else if ((flag & IDENTIFIER_USE) == IDENTIFIER_USE) {
                     // Has identifier declared?
                     if (!isIdentifierDeclared(data->currWord->word, identifierKeeper)) {
-                        // TODO: Identifier has not declared!
-                        // TODO: ERR CODE
+                        err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                         exit(0);
                     }
                 }
+                stack = addVariable(stack, data->currWord->word, dIdentifier);
             }
 
             else if (currToken == bIntConstant && (flag & INT_EXPECTED) == INT_EXPECTED) {
                 long int val = atol(data->currWord->word);
-                stack = addVariable(stack, &val, dStringConstant);
+                stack = addVariable(stack, &val, dIntConstant);
             }
             // Is data->currWord->word a String and is it expected?
             else if (currToken == bStringConstant && (flag & STRING_EXPECTED) == STRING_EXPECTED){
@@ -84,8 +82,7 @@ void parser(LexicalData* data){
             }
 
             else{
-                // TODO: Unrecognized Error!
-                // TODO: ERR CODE
+                err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                 exit(0);
             }
 
@@ -108,32 +105,36 @@ void parser(LexicalData* data){
                         currOperation(stack, identifierKeeper);
                         currOperation = NULL;
                         freeVariableStack(stack);
+                        stack = NULL;
                         break;
                     case bOpenBlock:
                         // Are we expecting a block?
                         if ((flag & BLOCK_EXPECTED) == BLOCK_EXPECTED) {
                             loop(stack, identifierKeeper, data, blockKeeper);
                             currBlock = getBlock(blockKeeper);
+                            currOperation = NULL;
+                            freeVariableStack(stack);
+                            stack = NULL;
                         }
                         else{
-                            // TODO: Unexpected block open!
-                            // TODO: ERR CODE
+                            err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                             exit(0);
                         }
                         break;
                     case bCloseBlock:
                         // NOTE: Upper if block should check for semantics
                         // Is/Are there any block/s?
-                        if(*(currBlock->loopCounter) != 0){
-                            fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
-                            data->currLine = currBlock->lineStarted;
+                        if(currBlock){
                             *(currBlock->loopCounter) -= 1;
+                            if(*(currBlock->loopCounter) > 0){
+                                fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
+                                data->currLine = currBlock->lineStarted;
+                            }
+                            else if (closeBlock(blockKeeper))
+                                currBlock = getBlock(blockKeeper);
                         }
-                        else if (closeBlock(blockKeeper))
-                            currBlock = getBlock(blockKeeper);
                         else{
-                            // TODO: Unexpected block close!
-                            // TODO: ERR CODE
+                            err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                             exit(0);
                         }
                         break;
@@ -141,8 +142,7 @@ void parser(LexicalData* data){
                 }
                 if(data->currKeyword->operationFunc){
                     if(currOperation){
-                        // TODO: Unexpected Keyword!
-                        // TODO: ERR CODE
+                        err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
                         exit(0);
                     }
                     currOperation = data->currKeyword->operationFunc;
@@ -151,9 +151,25 @@ void parser(LexicalData* data){
                 flag = data->currKeyword->flagsForNextWord;
                 expectedKeycode = data->currKeyword->expectedKeycode;
             }
+            else{
+                err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
+                exit(0);
+            }
         }
-
+        else{
+            err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
+            exit(0);
+        }
     }
+    checkBlocks(blockKeeper);
+    // Is line ended after last line?
+    if (flag != LINE_ENDED) {
+        fprintf(stderr, "No \"End line\"(\".\") character found at line %d\n", data->currLine);
+    }
+    freeBlockKeeper(blockKeeper);
+    freeVariableStack(stack);
+    freeKeyWordLinkedList(root);
+    freeIdentifierKeeper(identifierKeeper);
 }
 
 void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper){
@@ -161,7 +177,10 @@ void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data
     long int *val;
     if(curr->dataType == dIdentifier)
         val = getIdentifierData((char*) curr->data, identifierKeeper);
-    else
+    else{
+        val = malloc(sizeof (long int*));
         *val = *((long int*) curr->data);
+    }
+
     openBlock(blockKeeper, val, data->currLine, ftell(data->fPtr));
 }
