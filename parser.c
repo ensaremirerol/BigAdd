@@ -173,6 +173,7 @@ void parser(LexicalData* data){
 }
 
 void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper){
+    // TODO: To prevent memory leak free loopCounter if it's a IntConstant
     Variable *curr = stack;
     long int *val;
     if(curr->dataType == dIdentifier)

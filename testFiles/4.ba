@@ -3,9 +3,9 @@ int sum.
 move 5 to size.
 loop size times
 [
-    loop size times
+    loop 5 times
     [
-        loop size times [
+        loop 5 times [
             out size, newline.
         ]
     add size to sum.
