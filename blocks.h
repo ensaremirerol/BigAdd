@@ -25,6 +25,7 @@ typedef struct blockNode {
     unsigned int lineStarted;
     long int fPointer;
     long int *loopCounter;
+    bool isIntConstant;
     struct blockNode *nests;
 } Block;
 
@@ -34,7 +35,7 @@ typedef struct blockKeeper {
 } BlockKeeper;
 
 
-void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, long int fPointer);
+void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, long int fPointer, bool isIntConstant);
 
 Block* getBlock(BlockKeeper* blockKeeper);
 

@@ -173,15 +173,18 @@ void parser(LexicalData* data){
 }
 
 void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper){
-    // TODO: To prevent memory leak free loopCounter if it's a IntConstant
     Variable *curr = stack;
     long int *val;
-    if(curr->dataType == dIdentifier)
+    bool isIntConstant;
+    if(curr->dataType == dIdentifier){
         val = getIdentifierData((char*) curr->data, identifierKeeper);
+        isIntConstant = false;
+    }
     else{
         val = malloc(sizeof (long int*));
         *val = *((long int*) curr->data);
+        isIntConstant = true;
     }
 
-    openBlock(blockKeeper, val, data->currLine, ftell(data->fPtr));
+    openBlock(blockKeeper, val, data->currLine, ftell(data->fPtr), isIntConstant);
 }

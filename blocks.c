@@ -4,13 +4,14 @@
 
 #include "blocks.h"
 
-void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, long int fPointer) {
+void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, long int fPointer, bool isIntConstant) {
     Block *nBlock;
     nBlock = malloc(sizeof(Block));
     nBlock->lineStarted = line;
     nBlock->fPointer = fPointer;
     nBlock->loopCounter = loopCounter;
     nBlock->nests = NULL;
+    nBlock->isIntConstant = isIntConstant;
     if (blockKeeper->totalBlocks == 0) blockKeeper->root = nBlock;
     else {
         Block *curr = blockKeeper->root;
@@ -35,10 +36,12 @@ bool closeBlock(BlockKeeper *blockKeeper) {
     if (blockKeeper->totalBlocks == 0) return false;
     Block *curr = blockKeeper->root;
     if (blockKeeper->totalBlocks == 1) {
+        if(curr->isIntConstant) free(curr->loopCounter);
         free(curr);
         blockKeeper->root = NULL;
     } else {
         for (int i = 0; i < blockKeeper->totalBlocks - 2; i++) curr = curr->nests;
+        if(curr->nests->isIntConstant) free(curr->nests->loopCounter);
         free(curr->nests);
         curr->nests = NULL;
     }
