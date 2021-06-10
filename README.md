@@ -11,22 +11,7 @@ file’s name as the only attribute.
 example: The command `c:\> ba myscript.ba`
 must load and execute the script file called myscript.ba
 
-## How to use Lexical Analyzer for BigAdd Language
-To analyze a file, you should use the following format
-
-- `la <PATH>`
-
-`<PATH>` is the path of the file which you want to analyze.
-
-The analyzer will print its working path to help you.
-
-Note: You should include the file extension
-
-### Example command
-
-- `la ./script.ba`
-
-## Lexical analyzers' data structures
+## Data Structures
 
 ### KeyWord
 
@@ -34,13 +19,14 @@ Note: You should include the file extension
 
 ```c
 typedef struct keyWordStruct {
-    char *keyWord; // Keyword
-    char expectedKeycode; // Expected keycode after this keyword
-    char keycode; // Its' code.
-    unsigned char flagsForKeyword; // Expected flag for the use of this keyWord
-    unsigned char flagsForNextWord; // Flag for next expected "word". (It could be anything (Identifier, String, Int, ...))
-    struct keyWordStruct *next; // next Keyword
-} KeyWord;
+    char *keyWord; // keyword
+    Keycode expectedKeycode; // Expected keyword after this keyword
+    Keycode keycode; // Keywords' keycode
+    unsigned char flagsForKeyword; // Expected flag for the use of this keyword
+    unsigned char flagsForNextWord; // Flag for next expected word
+    void (*operationFunc)(Variable* stack, IdentifierKeeper* identifierKeeper); // Operation for this keyword
+    struct keyWordStruct *next;
+}KeyWord;
 ```
 
 Keeps all keywords in a linked list.
@@ -66,22 +52,22 @@ Lexical analyzer checks flag status with "Bitwise And" or "=="
 After a non-keyword word, the lexical analyzer sets the flag to NOP
 
 #### All Keywords
-KeyCode | Keyword | Expected Keycode | Expected keyword | Expected Flag      | Next Flag
-------- | ------- | ---------------- | ---------------- | ------------------ | ---------
-0       | int     | 11               | .                | LINE_ENDED         | IDENTIFIER_DECLARE
-1       | move    | 10               | to               | LINE_ENDED         | INT_VAL
-2       | add     | 10               | to               | LINE_ENDED         | INT_VAL
-3       | sub     | 13               | from             | LINE_ENDED         | INT_VAL
-4       | out     | 12               | ,                | LINE_ENDED         | OUT_LIST
-5       | loop    | 8                | times            | LINE_ENDED         | INT_VAL
-6       | [       | -1               |                  | BLOCK_EXPECTED     | LINE_ENDED
-7       | ]       | -1               |                  | LINE_ENDED         | LINE_ENDED
-8       | times   | -1               |                  | NOP                | BLOCK_EXPECTED
-9       | newline | 12               | ,                | OUT_LIST           | NOP
-10      | to      | 11               | .                | NOP                | IDENTIFIER_USE
-11      | .       | -1               |                  | NOP                | LINE_ENDED
-12      | ,       | 12               | ,                | NOP                | OUT_LIST
-13      | from    | 11               | .                | NOP                | IDENTIFIER_USE
+KeyCode           | Keyword | Expected Keycode | Expected keyword | Expected Flag      | Next Flag            | Operation
+-------           | ------- | ---------------- | ---------------- | ------------------ | ---------            | --------
+bInt              | int     | 11               | .                | LINE_ENDED         | IDENTIFIER_DECLARE   | identifier
+bMove             | move    | 10               | to               | LINE_ENDED         | INT_VAL              | move
+bAdd              | add     | 10               | to               | LINE_ENDED         | INT_VAL              | add
+bSub              | sub     | 13               | from             | LINE_ENDED         | INT_VAL              | sub
+bOut              | out     | 12               | ,                | LINE_ENDED         | OUT_LIST             | out
+bLoop             | loop    | 8                | times            | LINE_ENDED         | INT_VAL              | NULL
+bOpenBlock        | [       | -1               |                  | BLOCK_EXPECTED     | LINE_ENDED           | NULL
+bCloseBlock       | ]       | -1               |                  | LINE_ENDED         | LINE_ENDED           | NULL
+bTimes            | times   | -1               |                  | NOP                | BLOCK_EXPECTED       | NULL
+bNewLine          | newline | 12               | ,                | OUT_LIST           | NOP                  | NULL
+bTo               | to      | 11               | .                | NOP                | IDENTIFIER_USE       | NULL
+bEOL              | .       | -1               |                  | NOP                | LINE_ENDED           | NULL
+bSeparator        | ,       | 12               | ,                | NOP                | OUT_LIST             | NULL
+bFrom             | from    | 11               | .                | NOP                | IDENTIFIER_USE       | NULL
 
 * KeyCode: Keywords' code.
 * Keyword: Keyword itself.
@@ -89,6 +75,7 @@ KeyCode | Keyword | Expected Keycode | Expected keyword | Expected Flag      | N
 * Expected Keyword: Next expected keyword.
 * Expected Flag: Expected flag for the use of this KeyWord.
 * Next Flag: Flag for next expected "word".
+* Operation: Function for keyword
 
 Lexical analyzer always checks flag first.
 
@@ -119,7 +106,7 @@ Otherwise, the lexical analyzer expects the flag to be NOP.
   * Returns KeyWord pointer using keyWord string(char array). Returns NULL if keyWord not in the list.
 
 * ```c 
-  KeyWord *getKeyWordbyIndex(char keyCode, KeyWord *keyWordRoot);
+  KeyWord *getKeyWordByKeyCode(Keycode keyCode, KeyWord *keyWordRoot);
   ```
   * Same as above. Just uses keyCodes to find KeyWord.
 
@@ -139,9 +126,66 @@ Otherwise, the lexical analyzer expects the flag to be NOP.
   * Checks given string is an Identifier or not.
 
 * ```c 
-  bool isStringConstant(char *str, LineTracker *tracker);
+  void identifier(Variable* stack, IdentifierKeeper* identifierKeeper);
   ```
-  * Checks given string is a StringConstant or not.
+  * Creates identifier.
+
+* ```c 
+  void move(Variable* stack, IdentifierKeeper* identifierKeeper);
+  ```
+  * Moves a value to identifier
+
+* ```c 
+  void add(Variable* stack, IdentifierKeeper* identifierKeeper);
+  ```
+  * Adds a value to identifier
+
+* ```c 
+  void sub(Variable* stack, IdentifierKeeper* identifierKeeper);
+  ```
+  * Subtracts a value to identifier
+
+* ```c 
+  void out(Variable* stack, IdentifierKeeper* identifierKeeper);
+  ```
+  * Prints given values
+
+### Variable
+
+#### Variable Struct
+```c
+typedef struct variableStack{
+    DataType dataType;
+    void* data;
+    struct variableStack *next;
+}Variable;
+```
+
+Keeps given variables for operations.
+
+#### enum DataType
+
+Data stored in variable as void pointer.
+Operation functions casts void pointer according to the dataType.
+DataTypes are:
+* dIdentifier
+* dIntConstant
+* dStringConstant
+
+
+#### Variable Functions
+
+* ```c 
+  Variable* addVariable(Variable* curr, void* data, DataType type);
+  ```
+  * Adds given variable to given stack
+
+* ```c 
+  void freeVariableStack(Variable* curr);
+  ```
+  * Frees given variable stack
+
+
 
 ### IdentifierKeeper
 
@@ -185,42 +229,24 @@ Keeps all declared Identifiers and their values in Linked List.
   void freeIdentifierKeeper(IdentifierKeeper *identifierKeeper);
   ```
   * Frees given IdentifierKeeper.
+  
 
+### Operation functions
+Operation functions uses Variable stack and IdentifierKeeper to make operations.
 
-### LineTracker
-#### LineTracker Struct
-```c
-typedef struct lineTracker {
-  int currLine;
-} LineTracker;
-```
-
-Stores current line
-
-#### LineTracker Functions
-* ```c 
-  int getLine(LineTracker *tracker);
-  ```
-  * Returns currentLine.
-
-* ```c 
-  void incrementLine(LineTracker *tracker)
-  ```
-  * Increments currentLine one(1).
-
-* ```c 
-  LineTracker *createLineTracker();
-  ```
-  * Creates a LineTracker and returns its pointer.
-
+Parser makes sure variables are correct. (No unnecessary data, correct order)
 
 ### BlockKeeper
 #### Block Struct
 
 ```c
 typedef struct blockNode {
-  int lineStarted; // Where block started
-  struct blockNode *nests;
+    unsigned int lineStarted;
+    long int fPointer;
+    long int *loopCounter;
+    bool isIntConstant;
+    bool isShortHandLoop;
+    struct blockNode *nests;
 } Block;
 ```
 
@@ -228,18 +254,22 @@ typedef struct blockNode {
 
 ```c
 typedef struct blockKeeper {
-  unsigned int totalBlocks;
-  Block *root;
+    unsigned int totalBlocks;
+    Block *root;
 } BlockKeeper;
 ```
 
-Keeps all opened blocks and where they opened.
-When two blocks are nested, the nested block is linked inside the parent block
+Keeps all opened blocks, where they opened(file position[via fteel function] and line), its loop counter.
+When two blocks nested, the nested block linked inside the parent block.
+
+* isIntConstant: Is loop counter a IntConstant? If it is, free loop counter after loop.
+* isShortHandLoop: Is it a one line loop? If it is, Decrement loopCounter after End of Line.
 
 #### BlockKeeper Functions
 
 * ```c 
-  void openBlock(BlockKeeper *blockKeeper, int line);
+  void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, unsigned long int fPointer,
+   bool isIntConstant, bool isShortHandLoop);
   ```
   * Opens a new block. Nests new block if already a block opened.
 
@@ -249,7 +279,7 @@ When two blocks are nested, the nested block is linked inside the parent block
   * Closes the deepest block. If there is no block to close, returns false.
 
 * ```c 
-  int closeBlockAndGetLine(BlockKeeper *blockKeeper)
+  unsigned int closeBlockAndGetLine(BlockKeeper *blockKeeper);
   ```
   * Closes the deepest block and returns its startLine. If there is no block to close, returns -1.
 
@@ -266,6 +296,7 @@ When two blocks are nested, the nested block is linked inside the parent block
 
 ## Lexical Analyzer Helper Functions
 Lexical Analyzer has two header files. These are `fileio.h` and `errhandle.h`
+* `str.h` -> Functions about string(strclr)
 * `fileio.h` -> Functions about file operations
 * `errhandle.h` -> Functions about error handling
 

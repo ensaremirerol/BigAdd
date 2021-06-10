@@ -18,7 +18,7 @@ void parser(LexicalData* data){
 
     BlockKeeper *blockKeeper;
     blockKeeper = createBlockKeeper();
-    Block *currBlock;
+    Block *currBlock = NULL;
 
     TokenType currToken;
 
@@ -106,11 +106,20 @@ void parser(LexicalData* data){
                         currOperation = NULL;
                         freeVariableStack(stack);
                         stack = NULL;
+                        if(currBlock && currBlock->isShortHandLoop){
+                            *(currBlock->loopCounter) -= 1;
+                            if(*(currBlock->loopCounter) > 0){
+                                fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
+                                data->currLine = currBlock->lineStarted;
+                            }
+                            else if (closeBlock(blockKeeper))
+                                currBlock = getBlock(blockKeeper);
+                        }
                         break;
                     case bOpenBlock:
                         // Are we expecting a block?
                         if ((flag & BLOCK_EXPECTED) == BLOCK_EXPECTED) {
-                            loop(stack, identifierKeeper, data, blockKeeper);
+                            loop(stack, identifierKeeper, data, blockKeeper, false);
                             currBlock = getBlock(blockKeeper);
                             currOperation = NULL;
                             freeVariableStack(stack);
@@ -124,7 +133,7 @@ void parser(LexicalData* data){
                     case bCloseBlock:
                         // NOTE: Upper if block should check for semantics
                         // Is/Are there any block/s?
-                        if(currBlock){
+                        if(currBlock && !currBlock->isShortHandLoop){
                             *(currBlock->loopCounter) -= 1;
                             if(*(currBlock->loopCounter) > 0){
                                 fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
@@ -138,8 +147,18 @@ void parser(LexicalData* data){
                             exit(0);
                         }
                         break;
-                    default: break;
+                    default:
+                        if ((flag & BLOCK_EXPECTED) == BLOCK_EXPECTED) {
+                            loop(stack, identifierKeeper, data, blockKeeper, true);
+                            currBlock = getBlock(blockKeeper);
+                            currOperation = NULL;
+                            freeVariableStack(stack);
+                            stack = NULL;
+                            flag = LINE_ENDED;
+                            expectedKeycode = bNop;
+                        }
                 }
+
                 if(data->currKeyword->operationFunc){
                     if(currOperation){
                         err(data->currWord, currToken, root, expectedKeycode, flag, data->currLine);
@@ -172,7 +191,7 @@ void parser(LexicalData* data){
     freeIdentifierKeeper(identifierKeeper);
 }
 
-void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper){
+void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper, bool isShortHandLoop){
     Variable *curr = stack;
     long int *val;
     bool isIntConstant;
@@ -185,6 +204,6 @@ void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data
         *val = *((long int*) curr->data);
         isIntConstant = true;
     }
-
-    openBlock(blockKeeper, val, data->currLine, ftell(data->fPtr), isIntConstant);
+    unsigned long int filePos = isShortHandLoop?ftell(data->fPtr) - strlen(data->currWord->word): ftell(data->fPtr);
+    openBlock(blockKeeper, val, data->currLine, filePos, isIntConstant, isShortHandLoop);
 }

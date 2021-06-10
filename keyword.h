@@ -54,13 +54,13 @@ typedef struct keyWordStruct {
 } KeyWord;
 
 KeyWord *addKeyWord(char *keyWord, KeyWord *prev, Keycode keycode, Keycode expectedKeyCode, unsigned char flagsForKeyWord,
-                    unsigned char flagsForNextKeyWord, void (*operationFunc)());
+                    unsigned char flagsForNextKeyWord, void (*operationFunc)(Variable* stack, IdentifierKeeper *identifierKeeper));
 
 KeyWord *createKeyWordLinkedList();
 
 KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot);
 
-KeyWord *getKeyWordByIndex(Keycode keyCode, KeyWord *keyWordRoot);
+KeyWord *getKeyWordByKeyCode(Keycode keyCode, KeyWord *keyWordRoot);
 
 void freeKeyWordLinkedList(KeyWord *root);
 

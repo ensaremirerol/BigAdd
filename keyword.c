@@ -74,7 +74,7 @@ KeyWord *getKeyWord(char *keyWord, KeyWord *keyWordRoot) {
     return NULL;
 }
 
-KeyWord *getKeyWordByIndex(Keycode keyCode, KeyWord *keyWordRoot){
+KeyWord *getKeyWordByKeyCode(Keycode keyCode, KeyWord *keyWordRoot){
     KeyWord *curr = keyWordRoot;
     char i = 0;
     while (curr != NULL) {
@@ -122,7 +122,6 @@ bool isStringConstant(char *str, const unsigned int *line) {
 }
 
 void identifier(Variable* stack, IdentifierKeeper* identifierKeeper){
-    Variable *curr = stack;
     char* str = (char*) stack->data;
     !declareIdentifier(str, identifierKeeper);
 }
@@ -131,7 +130,6 @@ void move(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
     long int *val;
     if(curr->dataType == dIdentifier) val = getIdentifierData((char*) curr->data, identifierKeeper);
-    // TODO: Err at pointer casting check pointers
     else val = ((long*) curr->data);
     curr = curr->next;
     long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
@@ -166,7 +164,10 @@ void out(Variable* stack, IdentifierKeeper* identifierKeeper){
                 printf("%ld", *getIdentifierData((char*) curr->data, identifierKeeper));
                 break;
             case dStringConstant:
-                printf("%s", ((char*) curr->data));
+                if(((char*) curr->data)[0] == '\n') printf("\n");
+                for (int i = 1; i < strlen((char*) curr->data)-1; ++i) {
+                    printf("%c", ((char*) curr->data)[i]);
+                }
                 break;
             case dIntConstant:
                 printf("%ld", *((long int*) curr->data));

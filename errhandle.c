@@ -93,7 +93,7 @@ void err(Word *word, TokenType currentToken, KeyWord *root, Keycode expectedKeyc
     }
     else if((flag & KEYWORD_EXPECTED) != 0){
         if(expectedKeycode != bNop){
-            KeyWord *expected = getKeyWordByIndex(expectedKeycode, root);
+            KeyWord *expected = getKeyWordByKeyCode(expectedKeycode, root);
             if(currentToken == bKeyword){
                 fprintf(stderr, "Expected keyword \"%s\" but found keyword \"%s\" at line"
                                 " %d\n", expected->keyWord, word->word, line);

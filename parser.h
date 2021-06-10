@@ -15,6 +15,6 @@
 
 void parser(LexicalData* data);
 
-void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper);
+void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper, bool isShortHandLoop);
 
 #endif //BIGADD_PARSER_H
