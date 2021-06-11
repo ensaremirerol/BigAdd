@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "variable.h"
+#include "../../include/VariableStack/variable.h"
 
 Variable* addVariable(Variable* curr, void* data, DataType type){
     Variable *nVar = malloc(sizeof (Variable));

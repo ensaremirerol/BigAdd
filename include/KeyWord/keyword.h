@@ -9,8 +9,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "variable.h"
-#include "identifier.h"
+#include "../VariableStack/variable.h"
+#include "../IdentifierKeeper/identifier.h"
 
 #define LINE_ENDED           0b00000001
 #define STRING_EXPECTED      0b00000010

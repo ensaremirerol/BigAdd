@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "keyword.h"
+#include "../../include/KeyWord/keyword.h"
 
 KeyWord *addKeyWord(char *keyWord, KeyWord *prev, Keycode keycode, Keycode expectedKeyCode, unsigned char flagsForKeyWord,
                     unsigned char flagsForNextKeyWord, void (*operationFunc)(Variable* stack, IdentifierKeeper *identifierKeeper)) {

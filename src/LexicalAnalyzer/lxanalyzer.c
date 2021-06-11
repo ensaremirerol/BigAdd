@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "lxanalyzer.h"
+#include "../../include/LexicalAnalyzer/lxanalyzer.h"
 
 
 TokenType lexicalAnalyzer(LexicalData* data, KeyWord *root){

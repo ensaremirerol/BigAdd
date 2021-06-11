@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "identifier.h"
+#include "../../include/IdentifierKeeper/identifier.h"
 
 bool isIdentifierDeclared(char *identifierName, IdentifierKeeper *keeper) {
     Identifier *curr = keeper->root;

@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "fileio.h"
-#include "parser.h"
+#include "../include/File_IO/fileio.h"
+#include "../include/Parser/parser.h"
 int main(int argc, char** argv) {
     if (argc == 2){
         char* fPath = malloc(strlen(argv[1]) + 4);

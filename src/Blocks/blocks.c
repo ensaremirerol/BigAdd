@@ -2,7 +2,7 @@
 // Created by ensar on 5/26/2021.
 //
 
-#include "blocks.h"
+#include "../../include/Blocks/blocks.h"
 
 void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, unsigned long int fPointer, bool isIntConstant, bool isShortHandLoop) {
     Block *nBlock;

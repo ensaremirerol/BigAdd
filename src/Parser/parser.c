@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "parser.h"
+#include "../../include/Parser/parser.h"
 
 
 void parser(LexicalData* data){

@@ -5,9 +5,9 @@
 #ifndef BIGADD_LXANALYZER_H
 #define BIGADD_LXANALYZER_H
 
-#include "word.h"
-#include "keyword.h"
-#include "fileio.h"
+#include "../Word/word.h"
+#include "../KeyWord/keyword.h"
+#include "../File_IO/fileio.h"
 #include <stdio.h>
 #include <string.h>
 

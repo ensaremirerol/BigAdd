@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "word.h"
+#include "../../include/Word/word.h"
 
 Word* createWord(){
     Word* word = malloc(sizeof (Word));

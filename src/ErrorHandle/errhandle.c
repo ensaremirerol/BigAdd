@@ -2,7 +2,7 @@
 // Created by ensar on 6/10/2021.
 //
 
-#include "errhandle.h"
+#include "../../include/ErrorHandle/errhandle.h"
 
 void err(Word *word, TokenType currentToken, KeyWord *root, Keycode expectedKeycode, unsigned char flag, unsigned int line){
     if((flag & KEYWORD_EXPECTED) == 0){

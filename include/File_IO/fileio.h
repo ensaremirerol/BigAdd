@@ -16,8 +16,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "word.h"
-#include "str.h"
+#include "../Word/word.h"
+#include "../String/str.h"
 
 // Opens file
 FILE *openFile(char *path, char *mode);

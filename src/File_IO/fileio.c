@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "fileio.h"
+#include "../../include/File_IO/fileio.h"
 
 // Opens file
 FILE *openFile(char *path, char *mode) {

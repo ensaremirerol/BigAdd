@@ -3,4 +3,4 @@ project(BigAdd C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(BigAdd main.c fileio.c word.c identifier.c blocks.c keyword.c variable.c lxanalyzer.c parser.c str.c errhandle.c)
+add_executable(BigAdd src/main.c src/File_IO/fileio.c src/Word/word.c src/IdentifierKeeper/identifier.c src/Blocks/blocks.c src/KeyWord/keyword.c src/VariableStack/variable.c src/LexicalAnalyzer/lxanalyzer.c src/Parser/parser.c src/String/str.c src/ErrorHandle/errhandle.c)
