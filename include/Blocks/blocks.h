@@ -42,7 +42,7 @@ Block* getBlock(BlockKeeper* blockKeeper);
 
 bool closeBlock(BlockKeeper *blockKeeper);
 
-unsigned int closeBlockAndGetLine(BlockKeeper *blockKeeper);
+int closeBlockAndGetLine(BlockKeeper *blockKeeper);
 
 BlockKeeper *createBlockKeeper();
 

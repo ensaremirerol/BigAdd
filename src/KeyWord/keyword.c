@@ -123,7 +123,7 @@ bool isStringConstant(char *str, const unsigned int *line) {
 
 void identifier(Variable* stack, IdentifierKeeper* identifierKeeper){
     char* str = (char*) stack->data;
-    !declareIdentifier(str, identifierKeeper);
+    declareIdentifier(str, identifierKeeper);
 }
 
 void move(Variable* stack, IdentifierKeeper* identifierKeeper){

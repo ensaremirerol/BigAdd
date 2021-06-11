@@ -8,7 +8,7 @@ void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int lin
     Block *nBlock;
     nBlock = malloc(sizeof(Block));
     nBlock->lineStarted = line;
-    nBlock->fPointer = fPointer;
+    nBlock->fPointer = (long)fPointer;
     nBlock->loopCounter = loopCounter;
     nBlock->nests = NULL;
     nBlock->isShortHandLoop = isShortHandLoop;
@@ -50,7 +50,7 @@ bool closeBlock(BlockKeeper *blockKeeper) {
     return true;
 }
 
-unsigned int closeBlockAndGetLine(BlockKeeper *blockKeeper) {
+int closeBlockAndGetLine(BlockKeeper *blockKeeper) {
     if (blockKeeper->totalBlocks == 0) return -1;
     Block *curr = blockKeeper->root;
     unsigned int retVal;
@@ -66,7 +66,7 @@ unsigned int closeBlockAndGetLine(BlockKeeper *blockKeeper) {
         curr->nests = NULL;
     }
     blockKeeper->totalBlocks--;
-    return retVal;
+    return (int) retVal;
 }
 
 BlockKeeper *createBlockKeeper() {
