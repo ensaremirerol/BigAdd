@@ -175,5 +175,6 @@ void out(Variable* stack, IdentifierKeeper* identifierKeeper){
         }
         curr = curr->next;
     }
+    fflush(stdout);
 }
 
