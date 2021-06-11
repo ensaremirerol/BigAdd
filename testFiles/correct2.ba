@@ -1,0 +1,12 @@
+int x.
+
+loop 5 times
+[
+    loop 3 times
+    [
+        loop 1 times [
+            out x, newline.]
+        
+    add 5 to x.
+    ]
+]

@@ -1,0 +1,10 @@
+loop 5 times
+[
+  loop 1 times
+    out "hola", newline.
+  out "arada kalanlardanim", newline.
+  loop 5 times
+  [
+    out "hola", newline.
+  ]
+]
