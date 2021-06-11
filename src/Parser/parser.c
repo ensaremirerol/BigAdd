@@ -183,7 +183,7 @@ void parser(LexicalData* data){
     checkBlocks(blockKeeper);
     // Is line ended after last line?
     if (flag != LINE_ENDED) {
-        fprintf(stderr, "No \"End line\"(\".\") character found at line %d\n", data->currLine);
+        fprintf(stdout, "No \"End line\"(\".\") character found at line %d\n", data->currLine);
     }
     freeBlockKeeper(blockKeeper);
     freeVariableStack(stack);

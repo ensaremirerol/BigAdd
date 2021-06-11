@@ -116,7 +116,7 @@ bool isIdentifier(char *str) {
 bool isStringConstant(char *str, const unsigned int *line) {
     if (str[0] == LEXEME_STRING) {
         if (str[strlen(str) - 1] == LEXEME_STRING) return true;
-        fprintf(stderr, "String constant does not close at line: %d\n", *line);
+        fprintf(stdout, "String constant does not close at line: %d\n", *line);
     }
     return false;
 }

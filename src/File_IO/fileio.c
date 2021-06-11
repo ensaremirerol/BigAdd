@@ -38,7 +38,7 @@ bool skipCommentBlocks(FILE *fPtr, unsigned int *line) {
         result = true;
         while (c != COMMENT_CLOSE) {
             if (feof(fPtr)) {
-                fprintf(stderr, "Comment do not closed at line: %d\n", lineStarted);
+                fprintf(stdout, "Comment do not closed at line: %d\n", lineStarted);
                 exit(1);
             } else if (c == '\n') *line += 1;
             c = (char) fgetc(fPtr);
