@@ -4,7 +4,8 @@ for file in $ba_files
 do
   filename="${file%.*}"
   printf "%s\n\n" $filename
-  ./BigAdd $filename
-  wait
+  ./BigAdd $filename &
+  PID=$!
+  wait $PID
   printf "\n\n"
 done
