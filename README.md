@@ -1,4 +1,4 @@
-# Lexical Analyzer for BigAdd Language
+# Interpreter for BigAdd Language
 
 ## Big Add language
 
