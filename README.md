@@ -8,7 +8,7 @@ big integers programmatically and display the result on the screen.
 BigAdd is an interpreted language. The BigAdd interpreter works from the command line with the command BA, and takes the script
 file’s name as the only attribute.
 
-example: The command `c:\> ba myscript.ba`
+example: The command `c:\> ba myscript`
 must load and execute the script file called myscript.ba
 
 ## Data Structures
