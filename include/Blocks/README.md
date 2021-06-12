@@ -5,8 +5,8 @@
 ```c
 typedef struct blockNode {
     unsigned int lineStarted;
-    long int fPointer;
-    long int *loopCounter;
+    long long int fPointer;
+    long long int *loopCounter;
     bool isIntConstant;
     bool isShortHandLoop;
     struct blockNode *nests;
@@ -31,7 +31,7 @@ When two blocks nested, the nested block linked inside the parent block.
 ## BlockKeeper Functions
 
 * ```c 
-  void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, unsigned long int fPointer,
+  void openBlock(BlockKeeper *blockKeeper, long long int *loopCounter, unsigned int line, unsigned long long int fPointer,
    bool isIntConstant, bool isShortHandLoop);
   ```
     * Opens a new block. Nests new block if already a block opened.

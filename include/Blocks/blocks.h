@@ -23,8 +23,8 @@
 
 typedef struct blockNode {
     unsigned int lineStarted;
-    long int fPointer;
-    long int *loopCounter;
+    long long int fPointer;
+    long long int *loopCounter;
     bool isIntConstant;
     bool isShortHandLoop;
     struct blockNode *nests;
@@ -36,7 +36,7 @@ typedef struct blockKeeper {
 } BlockKeeper;
 
 
-void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, unsigned long int fPointer, bool isIntConstant, bool isShortHandLoop);
+void openBlock(BlockKeeper *blockKeeper, long long int *loopCounter, unsigned int line, unsigned long long int fPointer, bool isIntConstant, bool isShortHandLoop);
 
 Block* getBlock(BlockKeeper* blockKeeper);
 

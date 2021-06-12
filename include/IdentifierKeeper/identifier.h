@@ -24,7 +24,7 @@
 
 typedef struct identifierNode {
     char *name;
-    long int val;
+    long long int val;
     struct identifierNode *next;
 } Identifier;
 
@@ -37,7 +37,7 @@ bool isIdentifierDeclared(char *identifierName, IdentifierKeeper *keeper);
 
 bool declareIdentifier(char *identifierName, IdentifierKeeper *keeper);
 
-long int* getIdentifierData(char *identifierName, IdentifierKeeper *keeper);
+long long int* getIdentifierData(char *identifierName, IdentifierKeeper *keeper);
 
 IdentifierKeeper *createIdentifierKeeper();
 

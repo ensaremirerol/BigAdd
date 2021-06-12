@@ -16,8 +16,8 @@ Variable* addVariable(Variable* curr, void* data, DataType type){
             break;
         }
         case dIntConstant:{
-            long int *val = malloc(sizeof (long int));
-            *val = *((long int*) data);
+            long long int *val = malloc(sizeof (long long int));
+            *val = *((long long int*) data);
             nVar->data = val;
             break;
         }

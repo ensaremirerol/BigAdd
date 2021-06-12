@@ -4,7 +4,7 @@
 
 #include "../../include/Blocks/blocks.h"
 
-void openBlock(BlockKeeper *blockKeeper, long int *loopCounter, unsigned int line, unsigned long int fPointer, bool isIntConstant, bool isShortHandLoop) {
+void openBlock(BlockKeeper *blockKeeper, long long int *loopCounter, unsigned int line, unsigned long long int fPointer, bool isIntConstant, bool isShortHandLoop) {
     Block *nBlock;
     nBlock = malloc(sizeof(Block));
     nBlock->lineStarted = line;

@@ -73,7 +73,7 @@ void parser(LexicalData* data){
             }
 
             else if (currToken == bIntConstant && (flag & INT_EXPECTED) == INT_EXPECTED) {
-                long int val = atol(data->currWord->word);
+                long long int val = atol(data->currWord->word);
                 stack = addVariable(stack, &val, dIntConstant);
             }
             // Is data->currWord->word a String and is it expected?
@@ -193,17 +193,17 @@ void parser(LexicalData* data){
 
 void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper, bool isShortHandLoop){
     Variable *curr = stack;
-    long int *val;
+    long long int *val;
     bool isIntConstant;
     if(curr->dataType == dIdentifier){
         val = getIdentifierData((char*) curr->data, identifierKeeper);
         isIntConstant = false;
     }
     else{
-        val = malloc(sizeof (long int*));
-        *val = *((long int*) curr->data);
+        val = malloc(sizeof (long long int*));
+        *val = *((long long int*) curr->data);
         isIntConstant = true;
     }
-    unsigned long int filePos = isShortHandLoop?ftell(data->fPtr) - strlen(data->currWord->word): ftell(data->fPtr);
+    unsigned long long int filePos = isShortHandLoop?ftell(data->fPtr) - strlen(data->currWord->word): ftell(data->fPtr);
     openBlock(blockKeeper, val, data->currLine, filePos, isIntConstant, isShortHandLoop);
 }

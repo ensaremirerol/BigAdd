@@ -128,31 +128,31 @@ void identifier(Variable* stack, IdentifierKeeper* identifierKeeper){
 
 void move(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long int *val;
+    long long int *val;
     if(curr->dataType == dIdentifier) val = getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = ((long*) curr->data);
+    else val = ((long long int*) curr->data);
     curr = curr->next;
-    long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
+    long long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
     *identifierVal = *val;
 }
 
 void add(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long int val;
+    long long int val;
     if(curr->dataType == dIdentifier) val = *getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = *((long int*) curr->data);
+    else val = *((long long int*) curr->data);
     curr = curr->next;
-    long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
+    long long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
     *identifierVal = *identifierVal + val;
 }
 
 void sub(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long int val;
+    long long int val;
     if(curr->dataType == dIdentifier) val = *getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = *((long int*) curr->data);
+    else val = *((long long int*) curr->data);
     curr = curr->next;
-    long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
+    long long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
     *identifierVal = *identifierVal - val;
 }
 
@@ -161,7 +161,7 @@ void out(Variable* stack, IdentifierKeeper* identifierKeeper){
     while(curr){
         switch (curr->dataType) {
             case dIdentifier:
-                printf("%ld", *getIdentifierData((char*) curr->data, identifierKeeper));
+                printf("%lld", *getIdentifierData((char*) curr->data, identifierKeeper));
                 break;
             case dStringConstant:
                 if(((char*) curr->data)[0] == '\n') printf("\n");
@@ -170,7 +170,7 @@ void out(Variable* stack, IdentifierKeeper* identifierKeeper){
                 }
                 break;
             case dIntConstant:
-                printf("%ld", *((long int*) curr->data));
+                printf("%lld", *((long long int*) curr->data));
                 break;
         }
         curr = curr->next;

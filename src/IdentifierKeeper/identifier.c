@@ -31,7 +31,7 @@ bool declareIdentifier(char *identifierName, IdentifierKeeper *keeper) {
     return true;
 }
 
-long int* getIdentifierData(char *identifierName, IdentifierKeeper *keeper){
+long long int* getIdentifierData(char *identifierName, IdentifierKeeper *keeper){
     Identifier *curr = keeper->root;
     while (curr) {
         if (strcmp(identifierName, curr->name) == 0) return &curr->val;
