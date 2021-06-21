@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "../../include/IdentifierKeeper/identifier.h"
+#include "identifier.h"
 
 bool isIdentifierDeclared(char *identifierName, IdentifierKeeper *keeper) {
     Identifier *curr = keeper->root;
@@ -19,7 +19,7 @@ bool declareIdentifier(char *identifierName, IdentifierKeeper *keeper) {
     nIdentifier = malloc(sizeof(Identifier));
     nIdentifier->name = malloc(strlen(identifierName) + 1);
     strcpy(nIdentifier->name, identifierName);
-    nIdentifier->val = 0;
+    nIdentifier->value = strtobigInt("0");
     nIdentifier->next = NULL;
     if (keeper->size == 0) keeper->root = nIdentifier;
     else {
@@ -31,10 +31,10 @@ bool declareIdentifier(char *identifierName, IdentifierKeeper *keeper) {
     return true;
 }
 
-long long int* getIdentifierData(char *identifierName, IdentifierKeeper *keeper){
+BigInt* getIdentifierData(char *identifierName, IdentifierKeeper *keeper){
     Identifier *curr = keeper->root;
     while (curr) {
-        if (strcmp(identifierName, curr->name) == 0) return &curr->val;
+        if (strcmp(identifierName, curr->name) == 0) return curr->value;
         curr = curr->next;
     }
     return NULL;
@@ -55,10 +55,12 @@ void freeIdentifierKeeper(IdentifierKeeper *identifierKeeper) {
         temp = curr;
         curr = curr->next;
         free(temp->name);
+        freeBigInt(temp->value);
         free(temp);
     }
     if (curr) {
         free(curr->name);
+        freeBigInt(curr->value);
         free(curr);
     }
     free(identifierKeeper);

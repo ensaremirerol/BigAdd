@@ -7,6 +7,10 @@
 
 void parser(LexicalData* data){
 
+    negativeOne = strtobigInt("-1");
+
+    zero = strtobigInt("0");
+
     unsigned char flag = LINE_ENDED;
     Keycode expectedKeycode = bNop;
 
@@ -73,8 +77,8 @@ void parser(LexicalData* data){
             }
 
             else if (currToken == bIntConstant && (flag & INT_EXPECTED) == INT_EXPECTED) {
-                long long int val = atol(data->currWord->word);
-                stack = addVariable(stack, &val, dIntConstant);
+                BigInt *val = strtobigInt(data->currWord->word);
+                stack = addVariable(stack, val, dIntConstant);
             }
             // Is data->currWord->word a String and is it expected?
             else if (currToken == bStringConstant && (flag & STRING_EXPECTED) == STRING_EXPECTED){
@@ -107,8 +111,8 @@ void parser(LexicalData* data){
                         freeVariableStack(stack);
                         stack = NULL;
                         if(currBlock && currBlock->isShortHandLoop){
-                            *(currBlock->loopCounter) -= 1;
-                            if(*(currBlock->loopCounter) > 0){
+                            subBigInt(currBlock->loopCounter, negativeOne);
+                            if(compare(currBlock->loopCounter, zero) > 0){
                                 fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
                                 data->currLine = currBlock->lineStarted;
                             }
@@ -122,7 +126,7 @@ void parser(LexicalData* data){
                             loop(stack, identifierKeeper, data, blockKeeper, false);
                             currBlock = getBlock(blockKeeper);
                             currOperation = NULL;
-                            freeVariableStack(stack);
+                            free(stack);
                             stack = NULL;
                         }
                         else{
@@ -134,8 +138,8 @@ void parser(LexicalData* data){
                         // NOTE: Upper if block should check for semantics
                         // Is/Are there any block/s?
                         if(currBlock && !currBlock->isShortHandLoop){
-                            *(currBlock->loopCounter) -= 1;
-                            if(*(currBlock->loopCounter) > 0){
+                            subBigInt(currBlock->loopCounter, negativeOne);
+                            if(compare(currBlock->loopCounter, zero) > 0){
                                 fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
                                 data->currLine = currBlock->lineStarted;
                             }
@@ -152,7 +156,7 @@ void parser(LexicalData* data){
                             loop(stack, identifierKeeper, data, blockKeeper, true);
                             currBlock = getBlock(blockKeeper);
                             currOperation = NULL;
-                            freeVariableStack(stack);
+                            free(stack);
                             stack = NULL;
                             flag = LINE_ENDED;
                             expectedKeycode = bNop;
@@ -193,15 +197,14 @@ void parser(LexicalData* data){
 
 void loop(Variable* stack, IdentifierKeeper* identifierKeeper, LexicalData* data, BlockKeeper* blockKeeper, bool isShortHandLoop){
     Variable *curr = stack;
-    long long int *val;
+    BigInt *val;
     bool isIntConstant;
     if(curr->dataType == dIdentifier){
         val = getIdentifierData((char*) curr->data, identifierKeeper);
         isIntConstant = false;
     }
     else{
-        val = malloc(sizeof (long long int*));
-        *val = *((long long int*) curr->data);
+        val = (BigInt*) curr->data;
         isIntConstant = true;
     }
     unsigned long long int filePos = isShortHandLoop?ftell(data->fPtr) - strlen(data->currWord->word): ftell(data->fPtr);

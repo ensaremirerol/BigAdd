@@ -4,7 +4,7 @@
 
 #include "../../include/Blocks/blocks.h"
 
-void openBlock(BlockKeeper *blockKeeper, long long int *loopCounter, unsigned int line, unsigned long long int fPointer, bool isIntConstant, bool isShortHandLoop) {
+void openBlock(BlockKeeper *blockKeeper, BigInt *loopCounter, unsigned int line, unsigned long long int fPointer, bool isIntConstant, bool isShortHandLoop) {
     Block *nBlock;
     nBlock = malloc(sizeof(Block));
     nBlock->lineStarted = line;
@@ -37,12 +37,12 @@ bool closeBlock(BlockKeeper *blockKeeper) {
     if (blockKeeper->totalBlocks == 0) return false;
     Block *curr = blockKeeper->root;
     if (blockKeeper->totalBlocks == 1) {
-        if(curr->isIntConstant) free(curr->loopCounter);
+        if(curr->isIntConstant) freeBigInt(curr->loopCounter);
         free(curr);
         blockKeeper->root = NULL;
     } else {
         for (int i = 0; i < blockKeeper->totalBlocks - 2; i++) curr = curr->nests;
-        if(curr->nests->isIntConstant) free(curr->nests->loopCounter);
+        if(curr->nests->isIntConstant) freeBigInt(curr->nests->loopCounter);
         free(curr->nests);
         curr->nests = NULL;
     }

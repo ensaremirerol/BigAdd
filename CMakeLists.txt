@@ -13,6 +13,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include/Parser")
 include_directories("${PROJECT_SOURCE_DIR}/include/String")
 include_directories("${PROJECT_SOURCE_DIR}/include/VariableStack")
 include_directories("${PROJECT_SOURCE_DIR}/include/Word")
+include_directories("${PROJECT_SOURCE_DIR}/include/BigInt")
 
 
 file(GLOB_RECURSE src ${PROJECT_SOURCE_DIR}/src/*.c)

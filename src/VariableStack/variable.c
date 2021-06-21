@@ -2,7 +2,7 @@
 // Created by ensar on 6/8/2021.
 //
 
-#include "../../include/VariableStack/variable.h"
+#include "variable.h"
 
 Variable* addVariable(Variable* curr, void* data, DataType type){
     Variable *nVar = malloc(sizeof (Variable));
@@ -16,9 +16,7 @@ Variable* addVariable(Variable* curr, void* data, DataType type){
             break;
         }
         case dIntConstant:{
-            long long int *val = malloc(sizeof (long long int));
-            *val = *((long long int*) data);
-            nVar->data = val;
+            nVar->data = data;
             break;
         }
         default:{

@@ -5,15 +5,16 @@
 #ifndef BIGADD_PARSER_H
 #define BIGADD_PARSER_H
 
-#include "../Blocks/blocks.h"
+#include "blocks.h"
 #include "parser.h"
-#include "../LexicalAnalyzer/lxanalyzer.h"
-#include "../KeyWord/keyword.h"
-#include "../IdentifierKeeper/identifier.h"
-#include "../VariableStack/variable.h"
-#include "../ErrorHandle/errhandle.h"
+#include "lxanalyzer.h"
+#include "keyword.h"
+#include "identifier.h"
+#include "variable.h"
+#include "errhandle.h"
+#include "bigint.h"
 
-
+BigInt *negativeOne, *zero;
 
 void parser(LexicalData* data);
 
