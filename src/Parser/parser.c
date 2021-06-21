@@ -126,7 +126,8 @@ void parser(LexicalData* data){
                             loop(stack, identifierKeeper, data, blockKeeper, false);
                             currBlock = getBlock(blockKeeper);
                             currOperation = NULL;
-                            free(stack);
+                            if(stack->dataType != dIntConstant) freeVariableStack(stack);
+                            else free(stack);
                             stack = NULL;
                         }
                         else{
@@ -156,7 +157,8 @@ void parser(LexicalData* data){
                             loop(stack, identifierKeeper, data, blockKeeper, true);
                             currBlock = getBlock(blockKeeper);
                             currOperation = NULL;
-                            free(stack);
+                            if(stack->dataType != dIntConstant) freeVariableStack(stack);
+                            else free(stack);
                             stack = NULL;
                             flag = LINE_ENDED;
                             expectedKeycode = bNop;
