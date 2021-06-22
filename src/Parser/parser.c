@@ -111,7 +111,7 @@ void parser(LexicalData* data){
                         freeVariableStack(stack);
                         stack = NULL;
                         if(currBlock && currBlock->isShortHandLoop){
-                            subBigInt(currBlock->loopCounter, negativeOne);
+                            addBigInt(currBlock->loopCounter, negativeOne);
                             if(compare(currBlock->loopCounter, zero) > 0){
                                 fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
                                 data->currLine = currBlock->lineStarted;
