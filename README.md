@@ -31,7 +31,7 @@ typedef struct bigintNode{
 typedef struct bigIntStruct{
     bool isNegative;
     BigIntNode* root;
-unsigned long long size;
+    unsigned long long size;
 }BigInt;
 ```
 
