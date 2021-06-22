@@ -126,7 +126,6 @@ void addbi_internal(BigInt* dest, BigInt* number){
     tidyBigInt(dest);
 }
 
-// TODO: Rewrite
 void subBigInt(BigInt* dest, BigInt* number){
     BigInt *tdest, *tnumber;
     bool swap;
