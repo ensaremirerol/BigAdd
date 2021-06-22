@@ -107,14 +107,14 @@ void addbi_int(BigInt* dest, BigInt* number){
             carry = 1;
         }
         if(destNode->next == NULL && otherNode->next){
-            destNode->next = malloc(sizeof (BigIntNode));
+            destNode->next = calloc(sizeof (BigIntNode), 1);
             dest->size += 1;
         }
         destNode = destNode->next;
         otherNode = otherNode->next;
     }
     if(carry == 1){
-        destNode->next = malloc(sizeof (BigIntNode));
+        destNode->next = calloc(sizeof (BigIntNode), 1);
         dest->size += 1;
         destNode->number = carry;
     }
