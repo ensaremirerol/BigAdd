@@ -135,6 +135,7 @@ void move(Variable* stack, IdentifierKeeper* identifierKeeper){
     BigInt * identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
     freeBigIntNode(identifierVal->root);
     identifierVal->root = val->root;
+    identifierVal->isNegative = val->isNegative;
 }
 
 void add(Variable* stack, IdentifierKeeper* identifierKeeper){
