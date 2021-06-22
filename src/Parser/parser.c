@@ -139,7 +139,7 @@ void parser(LexicalData* data){
                         // NOTE: Upper if block should check for semantics
                         // Is/Are there any block/s?
                         if(currBlock && !currBlock->isShortHandLoop){
-                            subBigInt(currBlock->loopCounter, negativeOne);
+                            addBigInt(currBlock->loopCounter, negativeOne);
                             if(compare(currBlock->loopCounter, zero) > 0){
                                 fseek(data->fPtr, currBlock->fPointer, SEEK_SET);
                                 data->currLine = currBlock->lineStarted;

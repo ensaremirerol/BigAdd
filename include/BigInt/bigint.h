@@ -28,9 +28,9 @@ void addBigInt(BigInt* dest, BigInt* number);
 
 void subBigInt(BigInt* dest, BigInt* number);
 
-void add(BigInt* dest, BigInt* number);
+void addbi_int(BigInt* dest, BigInt* number);
 
-void sub(BigInt* dest, BigInt* number);
+void subbi_int(BigInt* dest, BigInt* number);
 
 void tidyBigInt(BigInt* number);
 
