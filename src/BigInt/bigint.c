@@ -246,7 +246,7 @@ void tidyBigInt(BigInt* number){
 BigInt *copyBigInt(BigInt *number){
     BigInt *result = malloc(sizeof (BigInt));
     result->isNegative = number->isNegative;
-    result->size = 0;
+    result->size = number->size;
     result->root = malloc(sizeof (BigIntNode));
     BigIntNode *numCurr = number->root;
     BigIntNode *copyCurr = result->root;
@@ -256,7 +256,6 @@ BigInt *copyBigInt(BigInt *number){
         if(numCurr->next){
             copyCurr->next = malloc(sizeof (BigIntNode));
             copyCurr->next->prev = copyCurr;
-            result->size += 1;
         }
         else copyCurr->next = NULL;
         numCurr = numCurr->next;
