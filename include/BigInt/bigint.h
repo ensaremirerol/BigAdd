@@ -28,13 +28,17 @@ void addBigInt(BigInt* dest, BigInt* number);
 
 void subBigInt(BigInt* dest, BigInt* number);
 
+void add(BigInt* dest, BigInt* number);
+
+void sub(BigInt* dest, BigInt* number);
+
 void tidyBigInt(BigInt* number);
 
 int compare(BigInt* num1, BigInt* num2);
 
 int compareAbsVal(BigInt* num1, BigInt* num2);
 
-int _compareNode(BigIntNode *node1, BigIntNode *node2);
+int compareNode(BigIntNode *node1, BigIntNode *node2);
 
 BigInt *copyBigInt(BigInt *number);
 
@@ -42,7 +46,7 @@ BigInt *strtobigInt(char* str);
 
 void printBigInt(BigInt* number);
 
-void _printbigIntNode(BigIntNode* node);
+void printbigIntNode(BigIntNode* node);
 
 void freeBigInt(BigInt* number);
 
