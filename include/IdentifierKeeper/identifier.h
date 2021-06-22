@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include "bigint.h"
 
 // IdentifierKeeper
 /*
@@ -24,7 +25,7 @@
 
 typedef struct identifierNode {
     char *name;
-    long long int val;
+    BigInt* value;
     struct identifierNode *next;
 } Identifier;
 
@@ -37,7 +38,7 @@ bool isIdentifierDeclared(char *identifierName, IdentifierKeeper *keeper);
 
 bool declareIdentifier(char *identifierName, IdentifierKeeper *keeper);
 
-long long int* getIdentifierData(char *identifierName, IdentifierKeeper *keeper);
+BigInt * getIdentifierData(char *identifierName, IdentifierKeeper *keeper);
 
 IdentifierKeeper *createIdentifierKeeper();
 

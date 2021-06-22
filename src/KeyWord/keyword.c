@@ -128,32 +128,34 @@ void identifier(Variable* stack, IdentifierKeeper* identifierKeeper){
 
 void move(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long long int *val;
+    BigInt *val;
     if(curr->dataType == dIdentifier) val = getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = ((long long int*) curr->data);
+    else val = ((BigInt *) curr->data);
     curr = curr->next;
-    long long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
-    *identifierVal = *val;
+    BigInt * identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
+    freeBigIntNode(identifierVal->root);
+    identifierVal->root = val->root;
+    identifierVal->isNegative = val->isNegative;
 }
 
 void add(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long long int val;
-    if(curr->dataType == dIdentifier) val = *getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = *((long long int*) curr->data);
+    BigInt *val;
+    if(curr->dataType == dIdentifier) val = getIdentifierData((char*) curr->data, identifierKeeper);
+    else val = ((BigInt*) curr->data);
     curr = curr->next;
-    long long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
-    *identifierVal = *identifierVal + val;
+    BigInt *identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
+    addBigInt(identifierVal, val);
 }
 
 void sub(Variable* stack, IdentifierKeeper* identifierKeeper){
     Variable *curr = stack;
-    long long int val;
-    if(curr->dataType == dIdentifier) val = *getIdentifierData((char*) curr->data, identifierKeeper);
-    else val = *((long long int*) curr->data);
+    BigInt *val;
+    if(curr->dataType == dIdentifier) val = getIdentifierData((char*) curr->data, identifierKeeper);
+    else val = ((BigInt*) curr->data);
     curr = curr->next;
-    long long int* identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
-    *identifierVal = *identifierVal - val;
+    BigInt *identifierVal = getIdentifierData((char*) curr->data, identifierKeeper);
+    subBigInt(identifierVal, val);
 }
 
 void out(Variable* stack, IdentifierKeeper* identifierKeeper){
@@ -161,7 +163,7 @@ void out(Variable* stack, IdentifierKeeper* identifierKeeper){
     while(curr){
         switch (curr->dataType) {
             case dIdentifier:
-                printf("%lld", *getIdentifierData((char*) curr->data, identifierKeeper));
+                printBigInt(getIdentifierData((char*) curr->data, identifierKeeper));
                 break;
             case dStringConstant:
                 if(((char*) curr->data)[0] == '\n') printf("\n");
