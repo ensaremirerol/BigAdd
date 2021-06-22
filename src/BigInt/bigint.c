@@ -63,7 +63,7 @@ void addBigInt(BigInt* dest, BigInt* number){
                 swap = true;
             }
         }
-        subbi_int(tdest, tnumber);
+        subbi_internal(tdest, tnumber);
     }
     else if (!dest->isNegative && number->isNegative){
         switch (compareAbsVal(dest, number)) {
@@ -81,10 +81,10 @@ void addBigInt(BigInt* dest, BigInt* number){
                 swap = true;
             }
         }
-        subbi_int(tdest, tnumber);
+        subbi_internal(tdest, tnumber);
     }
     else{
-        addbi_int(dest, number);
+        addbi_internal(dest, number);
         swap = false;
     }
     if(swap){
@@ -96,7 +96,7 @@ void addBigInt(BigInt* dest, BigInt* number){
     }
 
 }
-void addbi_int(BigInt* dest, BigInt* number){
+void addbi_internal(BigInt* dest, BigInt* number){
     int carry = 0;
     BigIntNode *destNode = dest->root, *otherNode = number->root;
     while (otherNode){
@@ -108,13 +108,18 @@ void addbi_int(BigInt* dest, BigInt* number){
         }
         if(destNode->next == NULL && otherNode->next){
             destNode->next = calloc(sizeof (BigIntNode), 1);
+            destNode->next->prev = destNode;
             dest->size += 1;
         }
-        destNode = destNode->next;
+        if(otherNode->next)destNode = destNode->next;
         otherNode = otherNode->next;
     }
     if(carry == 1){
-        destNode->next = calloc(sizeof (BigIntNode), 1);
+        if(destNode->next == NULL){
+            destNode->next = calloc(sizeof (BigIntNode), 1);
+            destNode->next->prev = destNode;
+        }
+        destNode = destNode->next;
         dest->size += 1;
         destNode->number = carry;
     }
@@ -141,7 +146,7 @@ void subBigInt(BigInt* dest, BigInt* number){
                 swap = true;
             }
         }
-        subbi_int(tdest, tnumber);
+        subbi_internal(tdest, tnumber);
     }
     else if (!dest->isNegative && !number->isNegative){
         switch (compareAbsVal(dest, number)) {
@@ -159,10 +164,10 @@ void subBigInt(BigInt* dest, BigInt* number){
                 swap = true;
             }
         }
-        subbi_int(tdest, tnumber);
+        subbi_internal(tdest, tnumber);
     }
     else{
-        addbi_int(dest, number);
+        addbi_internal(dest, number);
         swap = false;
     }
     if(swap){
@@ -174,7 +179,7 @@ void subBigInt(BigInt* dest, BigInt* number){
     }
 }
 
-void subbi_int(BigInt* dest, BigInt* number){
+void subbi_internal(BigInt* dest, BigInt* number){
     BigIntNode *destNode = dest->root, *otherNode = number->root;
     while (otherNode){
         destNode->number -= otherNode->number;
