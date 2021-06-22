@@ -1,0 +1,17 @@
+int x. int y.
+
+move 5 to x. move 309174913031 to y.
+add x to y.  out x, "  ", y, newline.
+move -3000 to y. add x to y. out x, "  ", y, newline.
+move -10 to x. move 1 to y. add x to y. out x, "  ", y, newline.
+move -99 to x. move -321 to y. add x to y. out x, "  ", y, newline.
+move 1132424235345654752349284620000 to x. move 99990003 to y. add x to y. out x, "  ", y,newline.
+
+out newline,newline,"çokNEtTOpla",newline, "ÇokNETÇUPRAYIÇıkart",newline,newline.
+
+move 5 to x. move 309174913031 to y.
+sub x from y.  out x, "  ", y, newline.
+move -3000 to y. sub x from y. out x, "  ", y, newline.
+move -10 to x. move 1 to y. sub x from y. out x, "  ", y, newline.
+move -99 to x. move -321 to y. sub x from y. out x, "  ", y, newline.
+move 1132424235345654752349284620000 to x. move 99990003 to y. sub x from y. out x, "  ", y.
