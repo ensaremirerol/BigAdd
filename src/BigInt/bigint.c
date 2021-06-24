@@ -249,7 +249,7 @@ BigInt *copyBigInt(BigInt *number){
     result->root = malloc(sizeof (BigIntNode));
     BigIntNode *numCurr = number->root;
     BigIntNode *copyCurr = result->root;
-    copyCurr->prev == NULL;
+    copyCurr->prev = NULL;
     while (numCurr){
         copyCurr->number = numCurr->number;
         if(numCurr->next){

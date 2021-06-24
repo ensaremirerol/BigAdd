@@ -1,0 +1,6 @@
+int n. int num.
+int square.
+move 2500 to num.
+move num to n.
+loop n times add num to square.
+out square, newline.

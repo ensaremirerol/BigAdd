@@ -1,0 +1,7 @@
+int num.
+int n.
+move 9999999999999999999999999999999999999 to n.
+    move n to num.
+    add num to num.
+    out num, newline.
+
