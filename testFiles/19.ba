@@ -1,5 +1,6 @@
 int num.
 move 5 to num.
 loop num times[
+out num.
 sub 1 from num.
 out num.]
