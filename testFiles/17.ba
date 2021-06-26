@@ -4,4 +4,4 @@ loop 5 times[
   out asdfsadfasgwefcwefqw, newline.
   loop 5 times [
     loop 5 times 
-    [out "40asdfawewqfqwefasdf2+971697297 YAPARRRRR"]]]
+    [out newline, "40asdfawewqfqwefasdf2+971697297 YAPARRRRR".]]]
