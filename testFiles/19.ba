@@ -1,0 +1,5 @@
+int num.
+move 5 to num.
+loop num times[
+sub 1 from num.
+out num.]
