@@ -1,3 +1,5 @@
+// looptaki num değerini takip et. galiba fazladan 1 çıkarıyor.
+
 int num.
 int loopCount.
 move 1 to loopCount.
