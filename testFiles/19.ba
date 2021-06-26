@@ -8,5 +8,5 @@ out num.
 sub 1 from num.
 add 1 to loopCount.
 out newline,"number: ",num,newline.]
-sub 1 from number. 
+sub 1 from num. 
 out newline, "out of loop number: ",num.
