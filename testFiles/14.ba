@@ -1,1 +1,0 @@
-loop -3 times loop 0 times [ loop 3 times out "ola".]
