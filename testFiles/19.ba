@@ -1,9 +1,10 @@
 int num.
 int loopCount.
+move 1 to loopCount.
 move 5 to num.
 loop num times[
 out "loop count ", loopCount," number: ".
-out num, newline.
+out num.
 sub 1 from num.
 add 1 to loopCount.
 out newline,"number: ",num,newline.]
