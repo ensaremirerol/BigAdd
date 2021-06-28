@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/alfasquad/bigadd/badge/main?s=743901135c3fee23bdb83a0e703fa0be9315fff2)](https://www.codefactor.io/repository/github/alfasquad/bigadd/overview/main)
+
 # Interpreter for BigAdd Language
 
 ## Big Add language
